@@ -18,8 +18,8 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: right;
+  justify-content: right;
   font-size: calc(10px + 2vmin);
   color: #333;
 }
@@ -35,4 +35,21 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+#editor-container {
+  width: 80%;
+  margin: 20px auto;
+  padding: 10px;
+  font-size: 16px;
+  align-content: right;
+}
+
+.editorEditable{
+
+  min-height: 200px;
+  border: 1px solid #818596;
+  padding: 10px;
+  border-radius: 4px;
+  background-color: #fff;
 }

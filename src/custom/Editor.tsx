@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import {createEditor} from "slate";
 import {Slate, Editable, withReact} from "slate-react";
 import { Descendant } from 'slate'
+import './../App.css';
+
 
 const initialValue: Descendant[] = [
   {
     type: 'paragraph',
-    children: [{ text: 'A line of text in a paragraph.' }],
+    children: [{ text: 'This is a simple rich text editor built with Slate.js. You can start typing here...' }],
   },
 ]
 
@@ -16,7 +18,7 @@ export const MyEditor = () => {
  return (
     // Add the editable component inside the context.
     <Slate editor={editor} initialValue={initialValue}>
-      <Editable />
+      <Editable className="editorEditable" placeholder="Type here..." />
     </Slate>
   )
 }
