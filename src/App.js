@@ -1,22 +1,16 @@
 import logo from './logo.svg';
 import './App.css';
+import React from 'react';
+import TopBar from './custom/TopBar.js';
 
 function App() {
   return (
     <div className="App">
+      <TopBar />
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Work in progress, stay tuned for updates!
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
       </header>
     </div>
   );
