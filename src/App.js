@@ -4,6 +4,7 @@ import './text-roller.css'
 import './wobble.css';
 import './letter-spacing.css';
 import './enthusiasm.css';
+import './wave-test.css';
 import React from 'react';
 import TopBar from './custom/TopBar.js';
 import { MyEditor } from './custom/Editor.tsx';
@@ -71,7 +72,16 @@ function App() {
         </g>
       </svg>
 
+      <div class="own-wave">
+        Das ist ein <span id="a1">T</span><span id="a2">E</span><span id="a3">S</span><span id="a4">T</span>
+      </div>
 
+
+      <div>
+        <br></br>
+        <br></br>
+        <br></br>
+      </div>
     </div>
     
   );
