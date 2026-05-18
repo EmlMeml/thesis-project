@@ -9,7 +9,13 @@ function App() {
       <TopBar />
       <div id="editor-container">
       <MyEditor />
-    </div>
+      </div>
+      
+      <div>
+        <br></br>
+        <br></br>
+        <br></br>
+      </div>
     </div>
     
   );
