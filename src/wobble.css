@@ -1,0 +1,45 @@
+body {
+  font-weight: 700;
+  color: #000000;
+}
+
+.wobble {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  perspective: 1000px;
+  perspective-origin: 50% 50%;
+  color: #000000;
+  > span{
+    margin: 2px;
+    -webkit-background-clip: text;
+  	-webkit-text-fill-color: #000000;
+    mix-blend-mode: hue;
+    background-size: auto;
+    background-attachment: unset;
+    background-position: 0%;
+    transform: translate3d(0,0,0) rotateY(35deg);
+    animation: 
+      swing 4s ease-in-out infinite,
+      texteffect 50s;
+    
+    @for $i from 1 through 20 {
+      &:nth-of-type(#{$i}) {
+        animation-delay: $i * .2s;
+      }
+    }
+  }
+}
+
+@keyframes swing {
+  50% {
+    transform: translate3d(0,0,0) rotateY(-35deg);
+  }
+}
+
+@keyframes texteffect {
+  50% {
+    background-position: 100%;
+  }
+}

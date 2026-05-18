@@ -1,0 +1,71 @@
+g path {
+  transform: translateY(3px);
+}
+
+g:nth-child(1) path {
+  animation-name: wiggleWiggle;
+  animation-duration: 1.25s;
+  animation-direction: alternate;
+  animation-timing-function: steps(2, end);
+  animation-iteration-count: infinite;
+}
+
+#E {
+  animation-delay: 0s;
+}
+
+#N {
+  animation-delay: 0.1s;
+}
+
+#T {
+  animation-delay: 0.15s;
+}
+
+#H {
+  animation-delay: 0.2s;
+}
+
+#U {
+  animation-delay: 0.25s;
+}
+
+#S_2 {
+  animation-delay: 0.3s;
+}
+
+#I {
+  animation-delay: 0.35s;
+}
+
+#A {
+  animation-delay: 0.4s;
+}
+
+#S {
+  animation-delay: 0.45s;
+}
+
+#M {
+  animation-delay: 0.5s;
+}
+
+/* transform: translateY(3px); */
+@keyframes wiggleWiggle {
+  20%,
+  100% {
+    transform: translate(0, 3px);
+  }
+
+  0% {
+    transform: translate(0, 0px);
+  }
+  10% {
+    transform: translate(0, 3px);
+  }
+}
+
+svg {
+  width: 30%;
+  height: auto;
+}
