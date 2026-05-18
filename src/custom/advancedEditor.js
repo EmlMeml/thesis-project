@@ -96,7 +96,7 @@ function TextEditor({ editor }) {
     </IconButton>
 
   </div>
-  <Editable className="editorEditable" onKeyDown={onKeyDown} renderLeaf={renderLeaf} />
+  <Editable className="editorEditable" onKeyDown={onKeyDown} renderLeaf={renderLeaf} placeholder="Begin your Story..."/>
 </div>;
 }
 
