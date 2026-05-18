@@ -3,7 +3,7 @@ import { createEditor, Descendant } from "slate";
 import { Slate, withReact } from "slate-react";
 import TextEditor from "./advancedEditor";
 // @ts-ignore: Allow side-effect CSS import without type declarations
-import './../App.css';
+
 
 type CustomText = {
   text: string;
