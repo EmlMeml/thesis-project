@@ -42,30 +42,41 @@ function TextEditor({ editor }) {
     return <Leaf {...props} />;
   }, []);
 
+  const onPaste = (event) => {
+    event.preventDefault();
+    const clipboardText = event.clipboardData?.getData("text/plain");
+    if (!clipboardText) {
+      return;
+    }
+    Transforms.insertText(editor, clipboardText);
+  };
+
   const onKeyDown = (event) => {
     if (!event.ctrlKey) {
       return;
     }
 
-    event.preventDefault(); // prevents default browser behaviour
-
     switch (event.key) {
       case "b": {
+        event.preventDefault();
         changeMark("bold");
         break;
       }
 
       case "i": {
+        event.preventDefault();
         changeMark("italic");
         break;
       }
 
       case "u": {
+        event.preventDefault();
         changeMark("underline");
         break;
       }
+
       default: {
-        break;
+        return;
       }
     }
   };
@@ -96,7 +107,7 @@ function TextEditor({ editor }) {
     </IconButton>
 
   </div>
-  <Editable className="editorEditable" onKeyDown={onKeyDown} renderLeaf={renderLeaf} placeholder="Begin your Story..."/>
+  <Editable className="editorEditable" onKeyDown={onKeyDown} onPaste={onPaste} renderLeaf={renderLeaf} placeholder="Begin your Story..."/>
 </div>;
 }
 
