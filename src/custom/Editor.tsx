@@ -9,18 +9,30 @@ type CustomText = {
   text: string;
 };
 
+type HeadingOneElement = {
+  type: 'heading-one';
+  children: CustomText[];
+};
+
 type ParagraphElement = {
   type: 'paragraph';
   children: CustomText[];
 };
 
-type CustomDescendant = ParagraphElement | CustomText;
+type CustomDescendant = HeadingOneElement | ParagraphElement | CustomText;
+
+
 
 const initialValue: CustomDescendant[] = [
   {
+    type: 'heading-one',
+    children: [{ text: 'This is a heading' }],
+  },
+  {
     type: 'paragraph',
     children: [{ text: 'This is a simple rich text editor built with Slate.js. You can start typing here...' }],
-  },
+  }
+  
 ]
 
 export const MyEditor = () => {

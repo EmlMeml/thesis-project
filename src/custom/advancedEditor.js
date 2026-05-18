@@ -1,16 +1,16 @@
 import { useCallback } from "react";
-import { Editor, Transforms, Text, Range } from "slate";
-import { Editable } from "slate-react";
+import { Editor, Transforms, Text, Range, Element as SlateElement } from "slate";
+import { Editable, ReactEditor } from "slate-react";
 import { IconButton } from "@mui/material";
 import {
   FormatBold,
   FormatItalic,
   FormatUnderlined,
   ContentCopy,
-  ContentPaste
+  ContentPaste,
+  BorderColor
 } from "@mui/icons-material";
 import './../App.css';
-
 
 const Leaf = (props) => {
   return (
@@ -33,12 +33,24 @@ function TextEditor({ editor }) {
       match: (n) => n[mark] // check for existing formatting
     });
 
+    console.log('changeMark existing match:', !!match);
     Transforms.setNodes(
       editor,
       { [mark]: !match }, // sets the formatting value
       { match: (n) => Text.isText(n), split: true }
     );
   }
+
+  const renderElement = useCallback((props) => {
+    switch (props.element.type) {
+        case 'heading-one':
+        return <h1 {...props.attributes}>{props.children}</h1>;
+        case 'heading-two':
+        return <h2 {...props.attributes}>{props.children}</h2>;
+        default:
+        return <p {...props.attributes}>{props.children}</p>;
+    }
+}, []); 
 
   const renderLeaf = useCallback((props) => {
     return <Leaf {...props} />;
@@ -83,6 +95,36 @@ function TextEditor({ editor }) {
     } catch (error) {
       console.error("Copy failed", error);
     }
+  };
+
+  const toggleBlock = (type) => {
+    console.log('toggleBlock called for type:', type, 'currentSelection:', editor.selection);
+
+    if (!editor.selection) {
+      // focus then retry on next tick — prevents loss of selection when toolbar is clicked
+      ReactEditor.focus(editor);
+      setTimeout(() => toggleBlock(type), 0);
+      return;
+    }
+
+    // Find the nearest block ancestor for the current selection
+    const match = Editor.above(editor, {
+      match: n => !Editor.isEditor(n) && SlateElement.isElement(n) && Editor.isBlock(editor, n),
+    });
+
+    if (!match) {
+      console.log('toggleBlock: no block ancestor found for selection');
+      return;
+    }
+
+    const [node, path] = match;
+    console.log('toggleBlock found block node:', node, 'at path:', path);
+
+    const isActive = node.type === type;
+
+    // Always set the block to the requested type (do not toggle back to paragraph)
+    Transforms.setNodes(editor, { type: type }, { at: path });
+    console.log('toggleBlock applied setNodes at path (forced), newSelection:', editor.selection);
   };
 
   const onKeyDown = (event) => {
@@ -147,9 +189,13 @@ function TextEditor({ editor }) {
     <IconButton style={{ color: "grey" }} onClick={pasteFromClipboard}>
       <ContentPaste />
     </IconButton>
+    
+    <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('paragraph'); }}>P</button>
+    <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('heading-one'); }}>H1</button>
+    <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('heading-two'); }}>H2</button>
 
   </div>
-  <Editable className="editorEditable" onKeyDown={onKeyDown} onPaste={onPaste} renderLeaf={renderLeaf} placeholder="Begin your Story..."/>
+  <Editable className="editorEditable" onKeyDown={onKeyDown} onPaste={onPaste} renderLeaf={renderLeaf} renderElement={renderElement} placeholder="Begin your Story..."/>
 </div>;
 }
 
