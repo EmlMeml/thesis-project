@@ -1,7 +1,14 @@
 import { useCallback } from "react";
 import { Editor, Transforms, Text } from "slate";
 import { Editable } from "slate-react";
+import { IconButton } from "@mui/material";
+import {
+  FormatBold,
+  FormatItalic,
+  FormatUnderlined,
+} from "@mui/icons-material";
 import './../App.css';
+
 
 const Leaf = (props) => {
   return (
@@ -62,7 +69,35 @@ function TextEditor({ editor }) {
       }
     }
   };
-  return <Editable onKeyDown={onKeyDown} renderLeaf={renderLeaf} />;
+  return <div
+            style={{
+                backgroundColor: "rgb(228, 228, 228)",
+                color: "#000000",
+                textAlign: "start",
+                padding: "10px",
+                borderRadius: "5px",
+                border: "1px solid #d6d6d6",
+                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)"
+            }}
+        >
+              
+  <div style={{ display: `flex`, backgroundColor: "rgb(228, 228, 228)" }}>
+
+    <IconButton style={{ color: "grey" }} onPointerDown={(e) => {changeMark("bold");}}>
+      <FormatBold />
+    </IconButton>
+
+    <IconButton style={{ color: "grey" }} onPointerDown={(e) => {changeMark("italic");}}>
+      <FormatItalic />
+    </IconButton>
+
+    <IconButton style={{ color: "grey" }} onPointerDown={(e) => {changeMark("underline");}}>
+      <FormatUnderlined />
+    </IconButton>
+
+  </div>
+  <Editable onKeyDown={onKeyDown} renderLeaf={renderLeaf} />
+</div>;
 }
 
 export default TextEditor;
