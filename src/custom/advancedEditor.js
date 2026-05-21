@@ -168,7 +168,7 @@ function TextEditor({ editor }) {
             }}
         >
               
-  <div style={{ display: `flex`, backgroundColor: "rgb(228, 228, 228)" }}>
+  <div style={{ display: `flex`, backgroundColor: "rgb(228, 228, 228)",marginBottom: "4px"}}>
 
     <IconButton style={{ color: "grey" }} onPointerDown={(e) => {changeMark("bold");}}>
       <FormatBold />
@@ -190,9 +190,9 @@ function TextEditor({ editor }) {
       <ContentPaste />
     </IconButton>
     
-    <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('paragraph'); }}>P</button>
-    <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('heading-one'); }}>H1</button>
-    <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('heading-two'); }}>H2</button>
+    <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('paragraph'); }}>Paragraph</button>
+    <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('heading-one'); }}>Heading 1</button>
+    <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('heading-two'); }}>Heading 2</button>
 
   </div>
   <Editable className="editorEditable" onKeyDown={onKeyDown} onPaste={onPaste} renderLeaf={renderLeaf} renderElement={renderElement} placeholder="Begin your Story..."/>
