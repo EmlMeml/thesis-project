@@ -47,7 +47,7 @@
 
 .editorEditable{
 
-  min-height: 200px;
+  min-height: 800px;
   border: 1px solid #818596;
   padding: 10px;
   border-radius: 4px;
@@ -79,4 +79,9 @@
 .toolbarButton:focus {
   outline: none;
   box-shadow: 0 0 0 2px rgba(129, 133, 150, 0.25);
+}
+
+#main-content {
+  display: flex;
+  padding: 8px;
 }
