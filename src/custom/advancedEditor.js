@@ -12,7 +12,7 @@ import {
 } from "@mui/icons-material";
 import './../App.css';
 import './../wave-test.css';
-import { makeAWave } from "../animation.js";
+import { makeAWave, stopAnimation } from "../animation.js";
 
 const Leaf = (props) => {
   return (
@@ -196,6 +196,7 @@ function TextEditor({ editor }) {
     <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('heading-one'); }}>Heading 1</button>
     <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('heading-two'); }}>Heading 2</button>
     <button className="toolbarButton" onPointerDown={() => makeAWave()}>Make A Wave!</button>
+    <button className="toolbarButton" onPointerDown={() => stopAnimation()}>Stop Animation</button>
 
   </div>
   <Editable className="editorEditable" onKeyDown={onKeyDown} onPaste={onPaste} renderLeaf={renderLeaf} renderElement={renderElement} placeholder="Begin your Story..."/>

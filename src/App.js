@@ -1,4 +1,5 @@
 import './App.css';
+import './wave-test.css';
 import React from 'react';
 import TopBar from './custom/TopBar.js';
 import { MyEditor } from './custom/Editor.tsx';
@@ -14,7 +15,6 @@ function App() {
         </div>
         <MyChat />
       </div>
-      <button id="save-button">Animation</button>
       
     </div>
     
