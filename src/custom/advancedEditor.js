@@ -191,10 +191,9 @@ function TextEditor({ editor }) {
     <IconButton style={{ color: "grey" }} onClick={pasteFromClipboard}>
       <ContentPaste />
     </IconButton>
-    
+    <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('heading-one'); }}>Titel</button>
+    <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('heading-two'); }}>Subtitel</button>
     <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('paragraph'); }}>Paragraph</button>
-    <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('heading-one'); }}>Heading 1</button>
-    <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('heading-two'); }}>Heading 2</button>
     <button className="toolbarButton" onPointerDown={() => makeAWave()}>Make A Wave!</button>
     <button className="toolbarButton" onPointerDown={() => stopAnimation()}>Stop Animation</button>
 
