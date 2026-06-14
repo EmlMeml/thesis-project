@@ -160,7 +160,7 @@ function TextEditor({ editor }) {
   };
   return <div
             style={{
-                backgroundColor: "rgb(228, 228, 228)",
+                backgroundColor: "#e4e7f4",
                 color: "#000000",
                 textAlign: "start",
                 padding: "10px",
@@ -170,25 +170,25 @@ function TextEditor({ editor }) {
             }}
         >
               
-  <div style={{ display: `flex`, backgroundColor: "rgb(228, 228, 228)",marginBottom: "4px"}}>
+  <div style={{ display: `flex`, backgroundColor: "#e4e7f4",marginBottom: "4px"}}>
 
-    <IconButton style={{ color: "grey" }} onPointerDown={(e) => {changeMark("bold");}}>
+    <IconButton style={{ color: "#1a2040" }} onPointerDown={(e) => {changeMark("bold");}}>
       <FormatBold />
     </IconButton>
 
-    <IconButton style={{ color: "grey" }} onPointerDown={(e) => {changeMark("italic");}}>
+    <IconButton style={{ color: "#1a2040" }} onPointerDown={(e) => {changeMark("italic");}}>
       <FormatItalic />
     </IconButton>
 
-    <IconButton style={{ color: "grey" }} onPointerDown={(e) => {changeMark("underline");}}>
+    <IconButton style={{ color: "#1a2040" }} onPointerDown={(e) => {changeMark("underline");}}>
       <FormatUnderlined />
     </IconButton>
 
-    <IconButton style={{ color: "grey" }} onClick={copySelectedText}>
+    <IconButton style={{ color: "#1a2040" }} onClick={copySelectedText}>
       <ContentCopy />
     </IconButton>
 
-    <IconButton style={{ color: "grey" }} onClick={pasteFromClipboard}>
+    <IconButton style={{ color: "#1a2040" }} onClick={pasteFromClipboard}>
       <ContentPaste />
     </IconButton>
     <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('heading-one'); }}>Titel</button>
