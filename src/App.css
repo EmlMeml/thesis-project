@@ -46,8 +46,9 @@
 }
 
 .editorEditable{
-
-  min-height: 800px;
+  height: 800px;
+  max-height: 800px;
+  overflow: auto;
   border: 1px solid #818596;
   padding: 10px;
   border-radius: 4px;
