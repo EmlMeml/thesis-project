@@ -19,7 +19,7 @@ export const MyChat = () => {
           padding: '16px',
           borderRadius: 32,
           border: 'none',
-          backgroundColor: '#16476d',
+          backgroundColor: '#33407f',
           color: '#fff',
           cursor: 'pointer',
           boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
@@ -40,8 +40,9 @@ export const MyChat = () => {
             width: 480,
             minHeight: 300,
             padding: 16,
-            backgroundColor: '#f0f0f0',
+            backgroundColor: '#e9ebf6',
             borderRadius: 8,
+            border: '0.5px solid #dbdef0',
             boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
             display: 'flex',
             flexDirection: 'column'
@@ -57,7 +58,7 @@ export const MyChat = () => {
                   padding: '6px 10px',
                   borderRadius: 6,
                   border: 'none',
-                  backgroundColor: '#e0e0e0',
+                  backgroundColor: '#e9ebf6',
                   cursor: 'pointer'
                 }}
               />

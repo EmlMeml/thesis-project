@@ -100,33 +100,20 @@ function TextEditor({ editor }) {
   };
 
   const toggleBlock = (type) => {
-    console.log('toggleBlock called for type:', type, 'currentSelection:', editor.selection);
-
     if (!editor.selection) {
-      // focus then retry on next tick — prevents loss of selection when toolbar is clicked
-      ReactEditor.focus(editor);
-      setTimeout(() => toggleBlock(type), 0);
       return;
     }
 
-    // Find the nearest block ancestor for the current selection
     const match = Editor.above(editor, {
-      match: n => !Editor.isEditor(n) && SlateElement.isElement(n) && Editor.isBlock(editor, n),
+      match: (n) => !Editor.isEditor(n) && SlateElement.isElement(n) && Editor.isBlock(editor, n),
     });
 
     if (!match) {
-      console.log('toggleBlock: no block ancestor found for selection');
       return;
     }
 
-    const [node, path] = match;
-    console.log('toggleBlock found block node:', node, 'at path:', path);
-
-    const isActive = node.type === type;
-
-    // Always set the block to the requested type (do not toggle back to paragraph)
-    Transforms.setNodes(editor, { type: type }, { at: path });
-    console.log('toggleBlock applied setNodes at path (forced), newSelection:', editor.selection);
+    const [, path] = match;
+    Transforms.setNodes(editor, { type }, { at: path });
   };
 
   const onKeyDown = (event) => {
@@ -160,7 +147,7 @@ function TextEditor({ editor }) {
   };
   return <div
             style={{
-                backgroundColor: "rgb(228, 228, 228)",
+                backgroundColor: "#e4e7f4",
                 color: "#000000",
                 textAlign: "start",
                 padding: "10px",
@@ -170,31 +157,30 @@ function TextEditor({ editor }) {
             }}
         >
               
-  <div style={{ display: `flex`, backgroundColor: "rgb(228, 228, 228)",marginBottom: "4px"}}>
+  <div style={{ display: `flex`, backgroundColor: "#e4e7f4",marginBottom: "4px"}}>
 
-    <IconButton style={{ color: "grey" }} onPointerDown={(e) => {changeMark("bold");}}>
+    <IconButton style={{ color: "#1a2040" }} onPointerDown={(e) => {changeMark("bold");}}>
       <FormatBold />
     </IconButton>
 
-    <IconButton style={{ color: "grey" }} onPointerDown={(e) => {changeMark("italic");}}>
+    <IconButton style={{ color: "#1a2040" }} onPointerDown={(e) => {changeMark("italic");}}>
       <FormatItalic />
     </IconButton>
 
-    <IconButton style={{ color: "grey" }} onPointerDown={(e) => {changeMark("underline");}}>
+    <IconButton style={{ color: "#1a2040" }} onPointerDown={(e) => {changeMark("underline");}}>
       <FormatUnderlined />
     </IconButton>
 
-    <IconButton style={{ color: "grey" }} onClick={copySelectedText}>
+    <IconButton style={{ color: "#1a2040" }} onClick={copySelectedText}>
       <ContentCopy />
     </IconButton>
 
-    <IconButton style={{ color: "grey" }} onClick={pasteFromClipboard}>
+    <IconButton style={{ color: "#1a2040" }} onClick={pasteFromClipboard}>
       <ContentPaste />
     </IconButton>
-    
+    <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('heading-one'); }}>Titel</button>
+    <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('heading-two'); }}>Subtitel</button>
     <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('paragraph'); }}>Paragraph</button>
-    <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('heading-one'); }}>Heading 1</button>
-    <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('heading-two'); }}>Heading 2</button>
     <button className="toolbarButton" onPointerDown={() => makeAWave()}>Make A Wave!</button>
     <button className="toolbarButton" onPointerDown={() => stopAnimation()}>Stop Animation</button>
 
