@@ -22,6 +22,7 @@
   justify-content: right;
   font-size: calc(10px + 2vmin);
   color: #333;
+  
 }
 
 .App-link {
@@ -37,8 +38,27 @@
   }
 }
 
+#text-preview {
+  width: 95%;
+  height: 850px;
+  border: 1px solid #818596;
+  padding: 10px;
+  border-radius: 4px;
+  background-color: #fff;
+  margin-top: 20px;
+  text-align: left;
+}
+
+#animation-container {
+  width: 40%;
+  margin: 20px auto;
+  padding: 10px;
+  font-size: 16px;
+  align-content: left;
+}
+
 #editor-container {
-  width: 80%;
+  width: 60%;
   margin: 20px auto;
   padding: 10px;
   font-size: 16px;

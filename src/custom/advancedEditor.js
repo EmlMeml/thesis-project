@@ -100,33 +100,20 @@ function TextEditor({ editor }) {
   };
 
   const toggleBlock = (type) => {
-    console.log('toggleBlock called for type:', type, 'currentSelection:', editor.selection);
-
     if (!editor.selection) {
-      // focus then retry on next tick — prevents loss of selection when toolbar is clicked
-      ReactEditor.focus(editor);
-      setTimeout(() => toggleBlock(type), 0);
       return;
     }
 
-    // Find the nearest block ancestor for the current selection
     const match = Editor.above(editor, {
-      match: n => !Editor.isEditor(n) && SlateElement.isElement(n) && Editor.isBlock(editor, n),
+      match: (n) => !Editor.isEditor(n) && SlateElement.isElement(n) && Editor.isBlock(editor, n),
     });
 
     if (!match) {
-      console.log('toggleBlock: no block ancestor found for selection');
       return;
     }
 
-    const [node, path] = match;
-    console.log('toggleBlock found block node:', node, 'at path:', path);
-
-    const isActive = node.type === type;
-
-    // Always set the block to the requested type (do not toggle back to paragraph)
-    Transforms.setNodes(editor, { type: type }, { at: path });
-    console.log('toggleBlock applied setNodes at path (forced), newSelection:', editor.selection);
+    const [, path] = match;
+    Transforms.setNodes(editor, { type }, { at: path });
   };
 
   const onKeyDown = (event) => {
