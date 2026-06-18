@@ -54,12 +54,10 @@
 
 #text-preview {
   width: 95%;
-  height: 850px;
+  height: 865px;
   border: 1px solid #818596;
-  padding: 10px;
   border-radius: 4px;
   background-color: #fff;
-  margin-top: 20px;
   text-align: left;
 }
 
