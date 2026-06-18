@@ -22,6 +22,7 @@
   justify-content: right;
   font-size: calc(10px + 2vmin);
   color: #333;
+  
 }
 
 .App-link {
@@ -37,8 +38,27 @@
   }
 }
 
+#text-preview {
+  width: 95%;
+  height: 850px;
+  border: 1px solid #818596;
+  padding: 10px;
+  border-radius: 4px;
+  background-color: #fff;
+  margin-top: 20px;
+  text-align: left;
+}
+
+#animation-container {
+  width: 40%;
+  margin: 20px auto;
+  padding: 10px;
+  font-size: 16px;
+  align-content: left;
+}
+
 #editor-container {
-  width: 80%;
+  width: 60%;
   margin: 20px auto;
   padding: 10px;
   font-size: 16px;
@@ -46,8 +66,9 @@
 }
 
 .editorEditable{
-
-  min-height: 800px;
+  height: 800px;
+  max-height: 800px;
+  overflow: auto;
   border: 1px solid #818596;
   padding: 10px;
   border-radius: 4px;
@@ -55,14 +76,13 @@
 }
 
 .toolbarButton{
-  border-color: #818596;
-  border-style: solid;
-  border-width: 1px;
+  border: 0px solid transparent;
   padding: 8px;
-  border-radius: 4px;
+  border-radius: 16px;
   min-height: 36px;
   min-width: 36px ;
-  background: transparent;
+  background: #bbc2e4;
+  color:#1a2040;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -72,8 +92,9 @@
 }
 
 .toolbarButton:hover {
-  background-color: rgba(129, 133, 150, 0.12);
-  border-color: #5f6573;
+  background-color: #808dcc;
+  border:0px solid transparent;
+  color: white;
 }
 
 .toolbarButton:focus {
