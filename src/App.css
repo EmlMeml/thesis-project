@@ -70,7 +70,7 @@
 
 .editorEditable{
   height: 800px;
-  max-height: 800px;
+  max-height: 100%;
   overflow: auto;
   border: 1px solid #818596;
   padding: 10px;
