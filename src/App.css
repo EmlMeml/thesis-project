@@ -38,6 +38,14 @@
   }
 }
 
+#text-nav {
+  width: 5%;  
+  padding: 10px;
+  border-radius: 4px;
+  background-color: #edeff8;
+  margin-top: 20px;
+}
+
 #text-preview {
   width: 95%;
   height: 850px;

@@ -5,6 +5,7 @@ import TopBar from './custom/TopBar.js';
 import { MyEditor } from './custom/Editor.tsx';
 import { MyChat } from './custom/Chat.tsx';
 import { TextPreview } from './custom/TextPreview.tsx';
+import { TextNav } from './custom/TextNav.tsx';
 
 function App() {
   const [editorContent, setEditorContent] = useState([]);
@@ -13,6 +14,7 @@ function App() {
     <div className="App">
       <TopBar />
       <div id="main-content">
+        <TextNav /> 
         <div id="editor-container">
           <MyEditor onContentChange={setEditorContent} />
         </div>
