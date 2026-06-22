@@ -30,6 +30,7 @@ export const TextPreview: React.FC<TextPreviewProps> = ({ content = [] }) => {
       backgroundColor: '#f9f9f9',
       width: '95%',
       maxHeight: '865px',
+      minHeight: '865px',
       overflowY: 'auto',
       textAlign: 'left'
     }}>
