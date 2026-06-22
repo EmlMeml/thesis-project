@@ -38,6 +38,12 @@
   }
 }
 
+#file-upload {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
 #text-nav {
   width: 5%;  
   padding: 10px;
@@ -46,23 +52,14 @@
   margin-top: 20px;
 }
 
-#text-preview {
-  width: 95%;
-  height: 850px;
-  border: 1px solid #818596;
-  padding: 10px;
-  border-radius: 4px;
-  background-color: #fff;
-  margin-top: 20px;
-  text-align: left;
-}
-
 #animation-container {
-  width: 40%;
+  width: 50%;
   margin: 20px auto;
   padding: 10px;
   font-size: 16px;
   align-content: left;
+  min-height: 800px;
+  box-sizing: border-box;
 }
 
 #editor-container {
@@ -71,11 +68,12 @@
   padding: 10px;
   font-size: 16px;
   align-content: right;
+
 }
 
 .editorEditable{
-  height: 800px;
-  max-height: 800px;
+  height: 81vh;
+  box-sizing: border-box;
   overflow: auto;
   border: 1px solid #818596;
   padding: 10px;
