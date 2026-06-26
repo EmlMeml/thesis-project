@@ -147,7 +147,7 @@ function TextEditor({ editor }) {
   };
   return <div
             style={{
-                backgroundColor: "#e4e7f4",
+                backgroundColor: "#e3ebf5",
                 color: "#000000",
                 textAlign: "start",
                 padding: "10px",
@@ -157,7 +157,7 @@ function TextEditor({ editor }) {
             }}
         >
               
-  <div style={{ display: `flex`, backgroundColor: "#e4e7f4",marginBottom: "4px"}}>
+  <div style={{ display: `flex`, backgroundColor: "#e3ebf5",marginBottom: "4px"}}>
 
     <IconButton style={{ color: "#1a2040" }} onPointerDown={(e) => {changeMark("bold");}}>
       <FormatBold />

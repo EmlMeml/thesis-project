@@ -38,7 +38,9 @@
   }
 }
 
-
+body{
+  background-color: #f6f8fc;
+}
 
 #file-upload {
   position: absolute;
@@ -47,25 +49,15 @@
 }
 
 #text-nav {
-  width: 5%;  
-  padding: 10px;
+  width: 5%; 
   border-radius: 4px;
-  background-color: #edeff8;
+  background-color: #e3ebf5;
   margin-top: 20px;
-}
-
-#animation-container {
-  width: 50%;
-  margin: 20px auto;
-  padding: 10px;
-  font-size: 16px;
-  align-content: left;
-  min-height: 800px;
-  box-sizing: border-box;
+  margin-left:24px;
 }
 
 #editor-container {
-  width: 60%;
+  width: 70%;
   margin: 20px auto;
   padding: 10px;
   font-size: 16px;
@@ -89,7 +81,7 @@
   border-radius: 16px;
   min-height: 36px;
   min-width: 36px ;
-  background: #bbc2e4;
+  background: #becfe7;
   color:#1a2040;
   display: inline-flex;
   align-items: center;
@@ -112,5 +104,5 @@
 
 #main-content {
   display: flex;
-  padding: 8px;
+
 }

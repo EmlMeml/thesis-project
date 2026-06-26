@@ -39,9 +39,6 @@ function App() {
         <div id="editor-container">
           <MyEditor fileText={fileText} onContentChange={setEditorContent} />
         </div>
-        <div id="animation-container">
-          <TextPreview content={editorContent} />
-        </div>
         <MyChat />
       </div>
     </div>
