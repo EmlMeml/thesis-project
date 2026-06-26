@@ -1,4 +1,5 @@
 import React, { ChangeEvent, useState } from 'react';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
 
 interface FileUploaderProps {
   onTextLoad?: (text: string) => void;
@@ -30,11 +31,28 @@ export default function FileUploader({ onTextLoad }: FileUploaderProps) {
 
   return (
     <div>
+      <label
+        htmlFor="file-upload"
+        style={{
+          cursor: 'pointer',
+          color: '#161b36',
+          backgroundColor: '#c9cee9',
+          padding: '8px 16px',
+          borderRadius: '8px',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}
+      >
+        <UploadFileIcon style={{ color: '#161b36' }} />
+        Upload File
+      </label>
       <input
         type="file"
         id="file-upload"
         accept=".txt,.md,.json,.js,.ts,.tsx"
         onChange={handleFileChange}
+        style={{ display: 'none'}}
       />
       {error && <div style={{ marginTop: '8px', color: 'red' }}>{error}</div>}
     </div>
