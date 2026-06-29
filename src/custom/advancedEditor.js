@@ -10,8 +10,8 @@ import {
   ContentPaste,
   BorderColor
 } from "@mui/icons-material";
-import './../App.css';
-import './../wave-test.css';
+import './../css/App.css';
+import './../css/wave-test.css';
 import { makeAWave, stopAnimation } from "../animation.js";
 
 const Leaf = (props) => {
