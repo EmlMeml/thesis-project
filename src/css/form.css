@@ -1,0 +1,37 @@
+#change-creator {
+    background-color: #cedbed;
+    margin: 24px 32px 24px 16px;
+    border-radius: 8px;
+    padding: 16px 16px 16px 16px;
+
+}
+
+#change-creator p {
+    font-size: 14px;
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+.change-elements {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    text-align: left;
+}
+
+#change-description-container {
+    margin-bottom: 16px;
+}
+
+#change-scope-container {
+    margin-bottom: 16px;
+}
+
+#change-intensity-container {
+    margin-bottom: 16px;
+}
+
+#change-visualize-container {
+    margin-top: 16px;
+    text-align: center;
+}

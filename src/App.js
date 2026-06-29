@@ -1,5 +1,6 @@
 import './css/App.css';
 import './css/wave-test.css';
+import './css/form.css';
 import React, { useState } from 'react';
 import TopBar from './custom/TopBar.js';
 import { MyEditor } from './custom/Editor.tsx';
