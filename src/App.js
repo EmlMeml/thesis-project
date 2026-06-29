@@ -6,6 +6,7 @@ import { MyEditor } from './custom/Editor.tsx';
 import { MyChat } from './custom/Chat.tsx';
 import { TextPreview } from './custom/TextPreview.tsx';
 import { TextNav } from './custom/TextNav.tsx';
+import { ChangeCreator } from './custom/ChangeCreator.tsx';
 
 function textToSlateValue(text) {
   if (!text) {
@@ -39,6 +40,7 @@ function App() {
         <div id="editor-container">
           <MyEditor fileText={fileText} onContentChange={setEditorContent} />
         </div>
+        <ChangeCreator />
         <MyChat />
       </div>
     </div>

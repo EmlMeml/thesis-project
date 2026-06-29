@@ -20,8 +20,10 @@ export const ChangeCreator = () => {
             <input type="range" id="change-intensity" className="change-intensity" min="1" max="5" defaultValue="3" />
         </div>
        <div id="change-visualize-container">
-        //Todo: Add dynamic pic for stone that is "thrown" based on the intensity of the change
+       {/* Todo: Add dynamic pic for stone that is "thrown" based on the intensity of the change */}
        </div>
     </div>
     );
 }
+
+export default ChangeCreator;
