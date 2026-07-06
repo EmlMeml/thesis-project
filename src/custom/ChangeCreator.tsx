@@ -35,11 +35,13 @@ export const ChangeCreator = () => {
                 value={intensityIndex}
                 onChange={(e) => setIntensityIndex(Number(e.target.value))}
             />
+            <br></br>
             <output id="change-intensity-output">{intensityMapping[intensityIndex]}</output>
         </div>
        <div id="change-visualize-container">
        {/* Todo: Add dynamic pic for stone that is "thrown" based on the intensity of the change */}
        </div>
+       <input type="submit" value="Apply Change" id="change-submit" />
     </div>
     );
 }
