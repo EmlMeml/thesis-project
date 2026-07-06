@@ -41,7 +41,7 @@ function App() {
           <TextNav />
         </div>
         <div id="editor-container">
-          <MyEditor fileText={fileText} onContentChange={setEditorContent} />
+          <MyEditor fileText={fileText} onContentChange={setEditorContent} onFileLoad={handleFileLoad}  />
           <ChangeCreator />
         </div>
         <MyChat />

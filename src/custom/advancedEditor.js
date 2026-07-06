@@ -30,7 +30,7 @@ const Leaf = (props) => {
   );
 };
 
-function TextEditor({ editor,  onFileLoad  }) {
+function TextEditor({ editor,  onFileLoad }) {
   function changeMark(mark) {
     const [match] = Editor.nodes(editor, {
       match: (n) => n[mark] // check for existing formatting
@@ -187,9 +187,9 @@ function TextEditor({ editor,  onFileLoad  }) {
     <button className="toolbarButton" onPointerDown={() => stopAnimation()}>Stop Animation</button>
     <div style={{ position: 'relative', left:'510px', bottom:'3px'}}>
       <FileUploader onTextLoad={onFileLoad} />
-    </div>
+    </div> 
   </div>
-  <Editable className="editorEditable" onKeyDown={onKeyDown} onPaste={onPaste} renderLeaf={renderLeaf} renderElement={renderElement} placeholder="Begin your Story..."/>
+  <Editable className="editorEditable" onFileLoad={onFileLoad} onKeyDown={onKeyDown} onPaste={onPaste} renderLeaf={renderLeaf} renderElement={renderElement} placeholder="Begin your Story..."/>
 </div>;
 }
 

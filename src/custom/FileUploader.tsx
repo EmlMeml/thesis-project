@@ -32,7 +32,6 @@ export default function FileUploader({ onTextLoad }: FileUploaderProps) {
   return (
     <div>
       <label
-        htmlFor="file-upload"
         style={{
           cursor: 'pointer',
           color: '#263a4a',
@@ -41,19 +40,31 @@ export default function FileUploader({ onTextLoad }: FileUploaderProps) {
           borderRadius: '8px',
           display: 'inline-flex',
           alignItems: 'center',
-          gap: '8px'
+          gap: '8px',
+          position: 'relative',
+          overflow: 'hidden'
         }}
       >
         <UploadFileIcon style={{ color: '#263a4a' }} />
         Upload File
+        <input
+          type="file"
+          accept=".txt,.md,.json,.js,.ts,.tsx"
+          onChange={handleFileChange}
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            width: '100%',
+            height: '100%',
+            opacity: 0,
+            cursor: 'pointer',
+            border: 0,
+            padding: 0,
+            margin: 0
+          }}
+        />
       </label>
-      <input
-        type="file"
-        id="file-upload"
-        accept=".txt,.md,.json,.js,.ts,.tsx"
-        onChange={handleFileChange}
-        style={{ display: 'none'}}
-      />
       {error && <div style={{ marginTop: '8px', color: 'red' }}>{error}</div>}
     </div>
   );
