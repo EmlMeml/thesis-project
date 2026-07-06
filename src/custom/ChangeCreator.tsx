@@ -44,7 +44,7 @@ export const ChangeCreator = () => {
                 onChange={handleIntensityChange}
             />
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
-                <span style={{ display: 'inline-flex', width: '24px', height: '24px', alignItems: 'center', justifyContent: 'center' }}>
+                <span style={{ display: 'inline-flex', width: '80px', height: '80px', alignItems: 'center', justifyContent: 'center' }}>
                     {intensityIcons[intensityIndex]}
                 </span>
                 <output id="change-intensity-output">{intensityMapping[intensityIndex]}</output>
