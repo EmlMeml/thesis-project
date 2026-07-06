@@ -35,7 +35,7 @@ function App() {
 
   return (
     <div className="App">
-      <TopBar onFileLoad={handleFileLoad} />
+      <TopBar/>
       <div id="main-content">
         <div id="text-navigation">
           <TextNav />

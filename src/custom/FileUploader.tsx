@@ -35,7 +35,7 @@ export default function FileUploader({ onTextLoad }: FileUploaderProps) {
         style={{
           cursor: 'pointer',
           color: '#263a4a',
-          backgroundColor: '#cad9e4',
+          backgroundColor: '#b5cad9',
           padding: '8px 16px',
           borderRadius: '8px',
           display: 'inline-flex',
