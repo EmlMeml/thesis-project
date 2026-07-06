@@ -1,6 +1,14 @@
 import React, { ChangeEvent, useState } from 'react';
+import {ReactComponent as SandIcon} from './../img/sand.svg';
+import {ReactComponent as CobblestoneIcon} from './../img/cobble.svg';
+import {ReactComponent as GravelIcon} from './../img/gravel.svg';
+import {ReactComponent as StoneIcon} from './../img/stone.svg';
+import {ReactComponent as BolderIcon} from './../img/bolder.svg';
+
+
 
 const intensityMapping = ['Sand', 'Gravel', 'Stone', 'Cobblestone', 'Rock'];
+const intensityIcons = [<SandIcon />, <GravelIcon />, <StoneIcon />, <CobblestoneIcon />, <BolderIcon />];
 export const ChangeCreator = () => {
     const [intensityIndex, setIntensityIndex] = useState(2); // Default to "Stone"
 
