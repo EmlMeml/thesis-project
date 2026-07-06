@@ -39,7 +39,7 @@
 }
 
 body{
-  background-color: #f6f8fc;
+  background-color: #f4f7fa;
 }
 
 #file-upload {
@@ -57,7 +57,8 @@ body{
   height: 80px;
   margin: 16px 0;
   border-radius: 4px;
-  background-color: #5377a1;
+  background-color: transparent;
+  border: 6px solid #cad9e4;
   box-sizing: border-box;
 }
 
@@ -93,7 +94,7 @@ body{
   border-radius: 16px;
   min-height: 36px;
   min-width: 36px ;
-  background: #becfe7;
+  background: #b5cad9;
   color:#1a2040;
   display: inline-flex;
   align-items: center;
@@ -104,7 +105,7 @@ body{
 }
 
 .toolbarButton:hover {
-  background-color: #808dcc;
+  background-color: #759cb9;
   border:0px solid transparent;
   color: white;
 }

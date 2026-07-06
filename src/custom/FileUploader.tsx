@@ -35,8 +35,8 @@ export default function FileUploader({ onTextLoad }: FileUploaderProps) {
         htmlFor="file-upload"
         style={{
           cursor: 'pointer',
-          color: '#161b36',
-          backgroundColor: '#c9cee9',
+          color: '#263a4a',
+          backgroundColor: '#cad9e4',
           padding: '8px 16px',
           borderRadius: '8px',
           display: 'inline-flex',
@@ -44,7 +44,7 @@ export default function FileUploader({ onTextLoad }: FileUploaderProps) {
           gap: '8px'
         }}
       >
-        <UploadFileIcon style={{ color: '#161b36' }} />
+        <UploadFileIcon style={{ color: '#263a4a' }} />
         Upload File
       </label>
       <input
