@@ -37,11 +37,13 @@ function App() {
     <div className="App">
       <TopBar onFileLoad={handleFileLoad} />
       <div id="main-content">
-        <TextNav />
+        <div id="text-navigation">
+          <TextNav />
+        </div>
         <div id="editor-container">
           <MyEditor fileText={fileText} onContentChange={setEditorContent} />
+          <ChangeCreator />
         </div>
-        <ChangeCreator />
         <MyChat />
       </div>
     </div>

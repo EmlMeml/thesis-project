@@ -1,10 +1,11 @@
 #change-creator {
     background-color: #cedbed;
-    margin: 24px 32px 24px 16px;
+    margin: 0px 24px 0px 16px;
     border-radius: 8px;
     padding: 16px 24px 16px 24px;
     font: 100%/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
-
+    width: 15%;
+    height: 100%;
 }
 
 #change-creator p {

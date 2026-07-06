@@ -48,25 +48,37 @@ body{
   right: 16px;
 }
 
-#text-nav {
-  width: 5%; 
+#text-nav { 
+  position: relative;
+  top: 0px;
+  left: 24px;
+  right: 24px;
+  width: calc(100% - 48px);
+  height: 80px;
+  margin: 16px 0;
   border-radius: 4px;
-  background-color: #e3ebf5;
-  margin-top: 20px;
-  margin-left:24px;
+  background-color: #5377a1;
+  box-sizing: border-box;
 }
 
 #editor-container {
-  width: 70%;
-  margin: 16px;
-  padding: 8px;
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  position: relative;
+  width: 100%;
+  margin: 0px 16px 16px;
+  padding-left: 32px;
+  padding-top: 16px;
   font-size: 16px;
-  align-content: right;
-
+  box-sizing: border-box;
+  height: calc(100vh - 240px);
 }
 
+
 .editorEditable{
-  height: 81vh;
+  height: 93%;
+  width: 100%;
   box-sizing: border-box;
   overflow: auto;
   border: 1px solid #818596;
@@ -104,5 +116,5 @@ body{
 
 #main-content {
   display: flex;
-
+  flex-direction: column;
 }

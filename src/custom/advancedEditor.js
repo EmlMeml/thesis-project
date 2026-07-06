@@ -150,6 +150,7 @@ function TextEditor({ editor }) {
                 backgroundColor: "#e3ebf5",
                 color: "#000000",
                 textAlign: "start",
+                width:"70%",
                 padding: "10px",
                 borderRadius: "5px",
                 border: "1px solid #d6d6d6",
