@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { createEditor, Descendant } from "slate";
 import { Slate, withReact } from "slate-react";
 import TextEditor from "./advancedEditor";
+import FileUploader from "./FileUploader";
 // @ts-ignore: Allow side-effect CSS import without type declarations
 
 interface MyEditorProps {
   fileText?: string;
   onContentChange?: (value: Descendant[]) => void;
+  onFileLoad?: (value: Descendant[]) => void;
 }
 
 const defaultValue = [
@@ -20,7 +22,7 @@ const defaultValue = [
   },
 ] as unknown as Descendant[];
 
-export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange }) => {
+export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, onFileLoad }) => {
   const [editor] = useState(() => withReact(createEditor()));
   const [value, setValue] = useState<Descendant[]>(defaultValue);
   const [editorKey, setEditorKey] = useState(0);
@@ -64,7 +66,7 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange })
       initialValue={value}
       onChange={handleChange}
     >
-      <TextEditor editor={editor} />
+      <TextEditor editor={editor} onFileLoad={onFileLoad} />
     </Slate>
   );
 };

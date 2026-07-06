@@ -1,11 +1,13 @@
-import './App.css';
-import './wave-test.css';
+import './css/App.css';
+import './css/wave-test.css';
+import './css/form.css';
 import React, { useState } from 'react';
 import TopBar from './custom/TopBar.js';
 import { MyEditor } from './custom/Editor.tsx';
 import { MyChat } from './custom/Chat.tsx';
 import { TextPreview } from './custom/TextPreview.tsx';
 import { TextNav } from './custom/TextNav.tsx';
+import { ChangeCreator } from './custom/ChangeCreator.tsx';
 
 function textToSlateValue(text) {
   if (!text) {
@@ -33,14 +35,14 @@ function App() {
 
   return (
     <div className="App">
-      <TopBar onFileLoad={handleFileLoad} />
+      <TopBar/>
       <div id="main-content">
-        <TextNav />
-        <div id="editor-container">
-          <MyEditor fileText={fileText} onContentChange={setEditorContent} />
+        <div id="text-navigation">
+          <TextNav />
         </div>
-        <div id="animation-container">
-          <TextPreview content={editorContent} />
+        <div id="editor-container">
+          <MyEditor fileText={fileText} onContentChange={setEditorContent} onFileLoad={handleFileLoad}  />
+          <ChangeCreator />
         </div>
         <MyChat />
       </div>
