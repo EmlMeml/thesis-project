@@ -41,10 +41,14 @@ export const ChangeCreator = () => {
                 max={intensityMapping.length - 1} 
                 step={1}
                 value={intensityIndex}
-                onChange={(e) => setIntensityIndex(Number(e.target.value))}
+                onChange={handleIntensityChange}
             />
-            <br></br>
-            <output id="change-intensity-output">{intensityMapping[intensityIndex]}</output>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+                <span style={{ display: 'inline-flex', width: '24px', height: '24px', alignItems: 'center', justifyContent: 'center' }}>
+                    {intensityIcons[intensityIndex]}
+                </span>
+                <output id="change-intensity-output">{intensityMapping[intensityIndex]}</output>
+            </div>
         </div>
        <div id="change-visualize-container">
        {/* Todo: Add dynamic pic for stone that is "thrown" based on the intensity of the change */}
