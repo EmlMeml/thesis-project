@@ -38,7 +38,7 @@ function App() {
       <TopBar/>
       <div id="main-content">
         <div id="text-navigation">
-          <TextNav />
+          <TextNav content={editorContent} />
         </div>
         <div id="editor-container">
           <MyEditor fileText={fileText} onContentChange={setEditorContent} onFileLoad={handleFileLoad}  />
