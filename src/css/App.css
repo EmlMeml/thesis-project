@@ -38,44 +38,49 @@
   }
 }
 
-#text-nav {
-  width: 5%;  
-  padding: 10px;
-  border-radius: 4px;
-  background-color: #edeff8;
-  margin-top: 20px;
+body{
+  background-color: #f4f7fa;
 }
 
-#text-preview {
-  width: 95%;
-  height: 850px;
-  border: 1px solid #818596;
-  padding: 10px;
-  border-radius: 4px;
-  background-color: #fff;
-  margin-top: 20px;
-  text-align: left;
+#file-upload {
+  position: absolute;
+  top: 16px;
+  right: 16px;
 }
 
-#animation-container {
-  width: 40%;
-  margin: 20px auto;
-  padding: 10px;
-  font-size: 16px;
-  align-content: left;
+#text-nav { 
+  position: relative;
+  top: 0px;
+  left: 24px;
+  right: 24px;
+  width: calc(100% - 48px);
+  height: 80px;
+  margin: 16px 0;
+  border-radius: 4px;
+  background-color: transparent;
+  border: 6px solid #cad9e4;
+  box-sizing: border-box;
 }
 
 #editor-container {
-  width: 60%;
-  margin: 20px auto;
-  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  position: relative;
+  width: 100%;
+  margin: 0px 16px 16px;
+  padding-left: 32px;
+  padding-top: 16px;
   font-size: 16px;
-  align-content: right;
+  box-sizing: border-box;
+  height: calc(100vh - 240px);
 }
 
+
 .editorEditable{
-  height: 800px;
-  max-height: 800px;
+  height: 93%;
+  width: 100%;
+  box-sizing: border-box;
   overflow: auto;
   border: 1px solid #818596;
   padding: 10px;
@@ -89,7 +94,7 @@
   border-radius: 16px;
   min-height: 36px;
   min-width: 36px ;
-  background: #bbc2e4;
+  background: #b5cad9;
   color:#1a2040;
   display: inline-flex;
   align-items: center;
@@ -100,7 +105,7 @@
 }
 
 .toolbarButton:hover {
-  background-color: #808dcc;
+  background-color: #759cb9;
   border:0px solid transparent;
   color: white;
 }
@@ -112,5 +117,5 @@
 
 #main-content {
   display: flex;
-  padding: 8px;
+  flex-direction: column;
 }

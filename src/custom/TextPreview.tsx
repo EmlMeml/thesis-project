@@ -24,11 +24,15 @@ export const TextPreview: React.FC<TextPreviewProps> = ({ content = [] }) => {
     <div id="text-preview" style={{
       whiteSpace: 'pre-wrap',
       wordWrap: 'break-word',
-      padding: '10px',
+      padding: '20px',
       border: '1px solid #ccc',
-      borderRadius: '5px',
+      borderRadius: '4px',
       backgroundColor: '#f9f9f9',
-      minHeight: '200px'
+      width: '95%',
+      maxHeight: '865px',
+      minHeight: '865px',
+      overflowY: 'auto',
+      textAlign: 'left'
     }}>
       {extractText()}
     </div>

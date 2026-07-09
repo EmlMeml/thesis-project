@@ -10,9 +10,10 @@ import {
   ContentPaste,
   BorderColor
 } from "@mui/icons-material";
-import './../App.css';
-import './../wave-test.css';
+import './../css/App.css';
+import './../css/wave-test.css';
 import { makeAWave, stopAnimation } from "../animation.js";
+import FileUploader from "./../custom/FileUploader.tsx";
 
 const Leaf = (props) => {
   return (
@@ -29,7 +30,7 @@ const Leaf = (props) => {
   );
 };
 
-function TextEditor({ editor }) {
+function TextEditor({ editor,  onFileLoad }) {
   function changeMark(mark) {
     const [match] = Editor.nodes(editor, {
       match: (n) => n[mark] // check for existing formatting
@@ -147,17 +148,18 @@ function TextEditor({ editor }) {
   };
   return <div
             style={{
-                backgroundColor: "#e4e7f4",
+                backgroundColor: "#dfe8ef",
                 color: "#000000",
                 textAlign: "start",
+                width:"70%",
                 padding: "10px",
                 borderRadius: "5px",
-                border: "1px solid #d6d6d6",
-                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)"
+                border: "1px solid #cad9e4",
+                boxShadow: "0 2px 4px #cad9e4"
             }}
         >
               
-  <div style={{ display: `flex`, backgroundColor: "#e4e7f4",marginBottom: "4px"}}>
+  <div style={{ display: `flex`, backgroundColor: "#dfe8ef",marginBottom: "4px"}}>
 
     <IconButton style={{ color: "#1a2040" }} onPointerDown={(e) => {changeMark("bold");}}>
       <FormatBold />
@@ -183,9 +185,11 @@ function TextEditor({ editor }) {
     <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('paragraph'); }}>Paragraph</button>
     <button className="toolbarButton" onPointerDown={() => makeAWave()}>Make A Wave!</button>
     <button className="toolbarButton" onPointerDown={() => stopAnimation()}>Stop Animation</button>
-
+    <div style={{ position: 'relative', left:'510px', bottom:'3px'}}>
+      <FileUploader onTextLoad={onFileLoad} />
+    </div> 
   </div>
-  <Editable className="editorEditable" onKeyDown={onKeyDown} onPaste={onPaste} renderLeaf={renderLeaf} renderElement={renderElement} placeholder="Begin your Story..."/>
+  <Editable className="editorEditable" onFileLoad={onFileLoad} onKeyDown={onKeyDown} onPaste={onPaste} renderLeaf={renderLeaf} renderElement={renderElement} placeholder="Begin your Story..."/>
 </div>;
 }
 
