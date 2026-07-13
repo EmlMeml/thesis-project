@@ -28,9 +28,14 @@ function textToSlateValue(text) {
 function App() {
   const [editorContent, setEditorContent] = useState([]);
   const [fileText, setFileText] = useState('');
+  const [activeSegmentText, setActiveSegmentText] = useState('');
 
   const handleFileLoad = (text) => {
     setFileText(text);
+  };
+
+  const handleSegmentClick = (text) => {
+    setActiveSegmentText(text);
   };
 
   return (
@@ -38,10 +43,10 @@ function App() {
       <TopBar/>
       <div id="main-content">
         <div id="text-navigation">
-          <TextNav content={editorContent} />
+          <TextNav content={editorContent} onSegmentClick={handleSegmentClick} />
         </div>
         <div id="editor-container">
-          <MyEditor fileText={fileText} onContentChange={setEditorContent} onFileLoad={handleFileLoad}  />
+          <MyEditor fileText={fileText} onContentChange={setEditorContent} onFileLoad={handleFileLoad} activeSegmentText={activeSegmentText} />
           <ChangeCreator />
         </div>
         <MyChat />

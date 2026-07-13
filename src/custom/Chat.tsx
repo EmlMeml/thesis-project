@@ -60,13 +60,15 @@ export const MyChat = () => {
             zIndex: 9998,
             width: 480,
             minHeight: 300,
+            maxHeight: 600,
             padding: 16,
             backgroundColor: '#e9ebf6',
             borderRadius: 8,
             border: '0.5px solid #dbdef0',
             boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            overflow: 'hidden'
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
@@ -86,7 +88,7 @@ export const MyChat = () => {
             </div>
           </div>
                 
-          <div id="chat-container" style={{ flex: 1, overflowY: 'auto', backgroundColor: '#ffffff', padding: 8, borderRadius: 4 }}>
+          <div id="chat-container" style={{ flex: 1, overflowY: 'auto', maxHeight: 600, backgroundColor: '#ffffff', padding: 8, borderRadius: 4 }}>
             {chatLog.map((msg, index) => (
                   <p key={index}>
                     <strong>{msg.sender}:</strong>{" "}

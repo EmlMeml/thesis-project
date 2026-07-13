@@ -4,9 +4,10 @@ import { TextSegment } from './TextSegment.tsx';
 
 interface TextNavProps {
     content?: Descendant[];
+    onSegmentClick?: (text: string) => void;
 }
 
-export const TextNav: React.FC<TextNavProps> = ({ content = [] }) => {
+export const TextNav: React.FC<TextNavProps> = ({ content = [], onSegmentClick }) => {
     const segments = content.flatMap((node: any) => {
         if (!node || !Array.isArray(node.children)) {
             return [];
@@ -32,7 +33,7 @@ export const TextNav: React.FC<TextNavProps> = ({ content = [] }) => {
         >
             {segments.length > 0 ? (
                 segments.map((text, index) => (
-                    <TextSegment key={`${text}-${index}`} text={text} />
+                    <TextSegment key={`${text}-${index}`} text={text} onClick={onSegmentClick} />
                 ))
             ) : (
                 <p style={{ margin: 0, color: '#666' }}>No text segments yet.</p>

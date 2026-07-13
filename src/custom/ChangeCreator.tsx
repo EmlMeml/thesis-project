@@ -1,9 +1,9 @@
 import React, { ChangeEvent, useState } from 'react';
-import {ReactComponent as SandIcon} from './../img/sand.svg';
-import {ReactComponent as CobblestoneIcon} from './../img/cobble.svg';
-import {ReactComponent as GravelIcon} from './../img/gravel.svg';
-import {ReactComponent as StoneIcon} from './../img/stone.svg';
-import {ReactComponent as BolderIcon} from './../img/bolder.svg';
+import {ReactComponent as SandIcon} from '../img/sand.svg';
+import {ReactComponent as CobblestoneIcon} from '../img/cobble.svg';
+import {ReactComponent as GravelIcon} from '../img/gravel.svg';
+import {ReactComponent as StoneIcon} from '../img/stone.svg';
+import {ReactComponent as BolderIcon} from '../img/bolder.svg';
 
 
 

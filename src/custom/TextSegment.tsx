@@ -5,13 +5,15 @@ interface TextSegmentProps {
     minWidth?: number;
     maxWidth?: number;
     height?: number;
+    onClick?: (text: string) => void;
 }
 
 export const TextSegment: React.FC<TextSegmentProps> = ({
     text = "",
     minWidth = 8,
     height = 64,
-    maxWidth = 260
+    maxWidth = 260,
+    onClick,
 }) => {
     const visibleText = text.trim() || "...";
     const charCount = visibleText.replace(/\s+/g, "").length;
@@ -22,6 +24,15 @@ export const TextSegment: React.FC<TextSegmentProps> = ({
         <div
             id="text-segment"
             className="text-segment"
+            onClick={() => onClick?.(visibleText)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onClick?.(visibleText);
+                }
+            }}
             style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -38,6 +49,8 @@ export const TextSegment: React.FC<TextSegmentProps> = ({
                 overflow: "hidden",
                 fontSize: "14px",
                 lineHeight: 1.3,
+                cursor: "pointer",
+                userSelect: "none",
             }}
         >
         </div>
