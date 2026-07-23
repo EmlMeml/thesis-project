@@ -1,0 +1,58 @@
+
+.text-segment {
+    position: relative;
+    display: block;
+    padding: 6px 8px;
+    margin: 2px;
+    border-radius: 8px;
+    background-color: transparent;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    white-space: pre-wrap;
+    overflow: hidden;
+    cursor: pointer;
+    user-select: none;
+   
+}
+
+.reg {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    margin: 2px 0;
+    padding: 6px 8px;
+    border-radius: 8px;
+    background-color: #cad9e4;
+    border: 1px solid #6791b2;
+    box-sizing: border-box;
+    white-space: pre-wrap;
+    overflow: hidden;
+    cursor: pointer;
+    user-select: none;
+    opacity: 0;
+    transform: scale(0);
+    animation:ripple 3s infinite ease-in-out;
+
+}
+
+.t-1 {
+    animation-delay: 0s;
+}
+.t-2 {
+    animation-delay: 4s;
+}
+.t-3 {
+    animation-delay: 8s;
+}
+
+@keyframes ripple {
+    0% {
+        opacity: 1;
+        transform: scale(0);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1);
+    }
+}

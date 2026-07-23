@@ -33,7 +33,7 @@ export const TextNav: React.FC<TextNavProps> = ({ content = [], onSegmentClick }
         >
             {segments.length > 0 ? (
                 segments.map((text, index) => (
-                    <TextSegment key={`${text}-${index}`} text={text} onClick={onSegmentClick} />
+                    <TextSegment key={`${text}-${index}`} text={text} onClick={onSegmentClick} isChanges={false} />
                 ))
             ) : (
                 <p style={{ margin: 0, color: '#666' }}>No text segments yet.</p>
