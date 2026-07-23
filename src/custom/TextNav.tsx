@@ -32,9 +32,20 @@ export const TextNav: React.FC<TextNavProps> = ({ content = [], onSegmentClick }
             }}
         >
             {segments.length > 0 ? (
-                segments.map((text, index) => (
-                    <TextSegment key={`${text}-${index}`} text={text} onClick={onSegmentClick} isChanged={true} />
-                ))
+                segments.map((text, index) => {
+                    const textLength = text.trim().length;
+                    const value = Math.min(100, Math.max(10, textLength * 4))/2; // Normalize value to a range of 10-100 and divide by 2 for scaling
+
+                    return (
+                        <TextSegment
+                            key={`${text}-${index}`}
+                            text={text}
+                            onClick={onSegmentClick}
+                            isChanged={true}
+                            value={value}
+                        />
+                    );
+                })
             ) : (
                 <p style={{ margin: 0, color: '#666' }}>No text segments yet.</p>
             )}

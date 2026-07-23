@@ -30,9 +30,9 @@ export const ChangeCreator = () => {
         width: 'fit-content',
         maxWidth: '100%',
         minWidth: '280px',
-        height: 'auto',
+        height: '100%',
         paddingTop: '24px',
-        paddingBottom: '24px',
+        paddingBottom: '16px',
         boxSizing: 'border-box',
         overflowWrap: 'anywhere'
       }}

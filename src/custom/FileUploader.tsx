@@ -37,7 +37,7 @@ export default function FileUploader({ onTextLoad }: FileUploaderProps) {
           color: '#263a4a',
           backgroundColor: '#b5cad9',
           padding: '8px 16px',
-          borderRadius: '8px',
+          borderRadius: '16px',
           display: 'inline-flex',
           alignItems: 'center',
           gap: '8px',

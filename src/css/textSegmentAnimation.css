@@ -31,16 +31,8 @@
     animation: none;
 }
 
-.text-segment.changed .t-1 {
-    animation: ripple 4s ease-in-out 0s infinite;
-}
-
-.text-segment.changed .t-2 {
-    animation: ripple 4s ease-in-out 0.8s infinite;
-}
-
-.text-segment.changed .t-3 {
-    animation: ripple 4s ease-in-out 1.6s infinite;
+.text-segment.changed .reg {
+    animation: ripple var(--ripple-duration, 2s) ease-in-out var(--ripple-delay, 0s) infinite;
 }
 
 @keyframes ripple {
