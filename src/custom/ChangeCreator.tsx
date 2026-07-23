@@ -1,15 +1,21 @@
 import React, { ChangeEvent, useState } from 'react';
-import {ReactComponent as StoneIcon} from '../img/stone.svg';
-import {ReactComponent as PuddleIcon} from '../img/puddle.svg';
-import {ReactComponent as PondIcon} from '../img/pond.svg';
-import {ReactComponent as LakeIcon} from '../img/lake.svg';
+import StoneIcon from '../img/stone.svg';
+import BoulderIcon from '../img/bolder.svg';
+import CobblestoneIcon from '../img/cobble.svg';
+import PebbleIcon from '../img/gravel.svg';
+import SandIcon from '../img/sand.svg';
+import PuddleIcon from '../img/puddle.svg';
+import PondIcon from '../img/pond.svg';
+import LakeIcon from '../img/lake.svg';
 
 const scopeMapping = ['Puddle', 'Pond', 'Lake'];
 const scopeIcons = [PuddleIcon, PondIcon, LakeIcon];
 
-const intensityMapping = ['Drop Stone', 'Half-Hearted Throw', 'Medium Strength Throw', 'Full Arm-leg Throw'];
+const intensityMapping = ['Sand', 'Pebble','Cobblestone', 'Stone' , 'Boulder'];
+const intensityIcons = [SandIcon, PebbleIcon, CobblestoneIcon, StoneIcon, BoulderIcon];
+
 export const ChangeCreator = () => {
-    const [intensityIndex, setIntensityIndex] = useState(2); // Default to "Stone"
+    const [intensityIndex, setIntensityIndex] = useState(2); // Default to "Cobblestone"
     const [scopeIndex, setScopeIndex] = useState(1); // Default to "Pond"
 
     const handleIntensityChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -47,11 +53,9 @@ export const ChangeCreator = () => {
                 value={scopeIndex}
                 onChange={(e) => setScopeIndex(Number(e.target.value))}
             />
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
-                <output id="change-scope-output">{scopeMapping[scopeIndex]}</output>
-                <br />
-                <span style={{ display: 'inline-flex', width: 'auto', height: 'auto', alignItems: 'center', justifyContent: 'center' }}>
-                    {scopeIcons[scopeIndex] ? React.createElement(scopeIcons[scopeIndex]) : null}
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+                <span style={{ display: 'inline-flex', width: 80, height: 80, alignItems: 'center', justifyContent: 'center' }}>
+                    {scopeIcons[scopeIndex] ? <img src={scopeIcons[scopeIndex]} alt={scopeMapping[scopeIndex]} style={{ width: 80, height: 80 }} /> : null}
                 </span>
             </div>
         </div>
@@ -67,12 +71,18 @@ export const ChangeCreator = () => {
                 onChange={handleIntensityChange}
             />
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
-                <output id="change-intensity-output">{intensityMapping[intensityIndex]}</output>
+                <output id="change-intensity-output">
+                    {/* {intensityMapping[intensityIndex]} */}
+                </output>
+                <br />
             </div>
-        </div>
-       <div id="change-visualize-container">
-       <StoneIcon style={{ width: '100px', height: '100px' }} />
-       <input type="submit" value="Throw Stone" id="change-submit" />
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+            <span style={{ display: 'inline-flex', width: 80, height: 80, alignItems: 'center', justifyContent: 'center' }}>
+                {intensityIcons[intensityIndex] ? <img src={intensityIcons[intensityIndex]} alt={intensityMapping[intensityIndex]} style={{ width: 80, height: 80 }} /> : null}
+            </span>
+            </div>
+            <br />
+            <input type="submit" value="Throw Stone" id="change-submit" />
        </div>
        
     </div>
