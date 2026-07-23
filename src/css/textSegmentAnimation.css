@@ -1,12 +1,11 @@
-
 .text-segment {
     position: relative;
     display: block;
     padding: 6px 8px;
     margin: 2px;
-    border-radius: 8px;
-    background-color: transparent;
-    border: 1px solid transparent;
+    border-radius: 8px;   
+    border: 1px solid #6791b2;
+    background-color: #dde7ee;
     box-sizing: border-box;
     white-space: pre-wrap;
     overflow: hidden;
@@ -20,11 +19,8 @@
     inset: 0;
     display: block;
     width: 100%;
-    margin: 2px 0;
-    padding: 6px 8px;
-    border-radius: 8px;
-    background-color: #cad9e4;
-    border: 1px solid #6791b2;
+    border-radius: 80px;
+    background-color: #9ab6cb;
     box-sizing: border-box;
     white-space: pre-wrap;
     overflow: hidden;
@@ -40,10 +36,10 @@
     animation-delay: 0s;
 }
 .t-2 {
-    animation-delay: 4s;
+    animation-delay: 8s;
 }
 .t-3 {
-    animation-delay: 8s;
+    animation-delay: 16s;
 }
 
 @keyframes ripple {
