@@ -7,29 +7,29 @@ interface TextSegmentProps {
     maxWidth?: number;
     height?: number;
     isChanged?: boolean;
-    isChanges?: boolean;
     onClick?: (text: string) => void;
 }
+
+
 
 export const TextSegment: React.FC<TextSegmentProps> = ({
     text = "",
     minWidth = 8,
     height = 64,
     maxWidth = 260,
-    isChanged = false,
-    isChanges,
+    isChanged,
     onClick,
 }) => {
     const visibleText = text.trim() || "...";
     const charCount = visibleText.replace(/\s+/g, "").length;
-    const isCurrentlyChanged = isChanged || isChanges || false;
+    const isCurrentlyChanged = Boolean(isChanged);
 
     const width = Math.min(maxWidth, Math.max(minWidth, charCount * 7 + 24));
 
     return (
         <div
             id="text-segment"
-            className="text-segment"
+            className={`text-segment${isCurrentlyChanged ? " changed" : ""}`}
             onClick={() => onClick?.(visibleText)}
             role="button"
             tabIndex={0}
