@@ -30,6 +30,9 @@ function App() {
   const [editorContent, setEditorContent] = useState([]);
   const [fileText, setFileText] = useState('');
   const [activeSegmentText, setActiveSegmentText] = useState('');
+  const editorText = editorContent
+    .map((node) => (node.children ? node.children.map((child) => child.text).join('') : ''))
+    .join('\n');
 
   const handleFileLoad = (text) => {
     setFileText(text);
@@ -49,7 +52,7 @@ function App() {
           </Grid>
           <Grid id="editor-container" container size={9} direction="row" >
             <MyEditor fileText={fileText} onContentChange={setEditorContent} onFileLoad={handleFileLoad} activeSegmentText={activeSegmentText} />
-            <ChangeCreator />
+            <ChangeCreator editorText={editorText} />
           </Grid>
           <MyChat />
       </Grid>

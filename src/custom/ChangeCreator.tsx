@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useState, useRef } from 'react';
 import StoneIcon from '../img/stone.svg';
 import BoulderIcon from '../img/bolder.svg';
 import CobblestoneIcon from '../img/cobble.svg';
@@ -14,9 +14,23 @@ const scopeIcons = [PuddleIcon, PondIcon, LakeIcon];
 const intensityMapping = ['Sand', 'Pebble','Cobblestone', 'Stone' , 'Boulder'];
 const intensityIcons = [SandIcon, PebbleIcon, CobblestoneIcon, StoneIcon, BoulderIcon];
 
-export const ChangeCreator = () => {
+export function generatePrompt(description: string, scopeIndex: number, intensityIndex: number, editorText: string = ''): string {
+    const scope = scopeMapping[scopeIndex];
+    const intensity = intensityMapping[intensityIndex];
+    const prompt = `Please apply the following request in the text below: ${description}. Use the following parameters:
+    **Scope:** ${scope}
+    **Thematic Depth:** ${intensity}
+    **Fidelity:** High
+    **Plot Consistency:** High
+    Apply these changes to the following Text: ${editorText}`;
+    console.log(prompt);
+    return prompt;
+}
+
+export const ChangeCreator = ({ editorText = '' }: { editorText?: string }) => {
     const [intensityIndex, setIntensityIndex] = useState(2); // Default to "Cobblestone"
     const [scopeIndex, setScopeIndex] = useState(1); // Default to "Pond"
+    const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
 
     const handleIntensityChange = (e: ChangeEvent<HTMLInputElement>) => {
         setIntensityIndex(Number(e.target.value));
@@ -40,7 +54,7 @@ export const ChangeCreator = () => {
         <h3>Create your Stone</h3>
         <div id="change-description-container" className="change-elements">
             <p>Describe the changes you want to make:</p>
-            <textarea id="change-description" placeholder="Enter your change description here..." rows={5}></textarea>
+            <textarea id="change-description" ref={descriptionRef} placeholder="Enter your change description here..." rows={5}></textarea>
         </div>
         <div id="change-scope-container" className="change-elements">
             <p>Choose the scope of the changes:</p>
@@ -82,7 +96,7 @@ export const ChangeCreator = () => {
             </span>
             </div>
             <br />
-            <input type="submit" value="Throw Stone" id="change-submit" />
+              <input type="submit" value="Throw Stone" id="change-submit" onClick={() => generatePrompt(descriptionRef.current?.value || '', scopeIndex, intensityIndex, editorText)} />
        </div>
        
     </div>
