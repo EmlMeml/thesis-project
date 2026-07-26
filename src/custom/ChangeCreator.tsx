@@ -15,11 +15,12 @@ const intensityMapping = ['Sand', 'Pebble','Cobblestone', 'Stone' , 'Boulder'];
 const intensityIcons = [SandIcon, PebbleIcon, CobblestoneIcon, StoneIcon, BoulderIcon];
 
 export function generatePrompt(description: string, scopeIndex: number, intensityIndex: number, editorText: string = ''): string {
-    const scope = scopeMapping[scopeIndex];
-    const intensity = intensityMapping[intensityIndex];
+    const scope = scopeIndex+1;
+    const intensity = intensityIndex+1;
     const prompt = `Please apply the following request in the text below: ${description}. Use the following parameters:
-    **Scope:** ${scope}
-    **Thematic Depth:** ${intensity}
+    **Scope:** ${scope} out of 3, with 3 = Considerable changes (paragraphs considered), 2 = Moderate changes, 1 = Minor changes (replace words)
+    **Intensity:** ${intensity} out of 5, with 5 = Very intense changes, 4 = Intense changes, 3 = Moderate changes, 2 = Mild changes, 1 = Very mild changes
+    **Thematic Depth:** High
     **Fidelity:** High
     **Plot Consistency:** High
     Apply these changes to the following Text: ${editorText}`;
