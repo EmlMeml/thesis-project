@@ -14,6 +14,8 @@ const scopeIcons = [PuddleIcon, PondIcon, LakeIcon];
 const intensityMapping = ['Sand', 'Pebble','Cobblestone', 'Stone' , 'Boulder'];
 const intensityIcons = [SandIcon, PebbleIcon, CobblestoneIcon, StoneIcon, BoulderIcon];
 
+type Message = { sender: string; text: string };
+
 export function generatePrompt(description: string, scopeIndex: number, intensityIndex: number, editorText: string = ''): string {
     const scope = scopeIndex+1;
     const intensity = intensityIndex+1;
@@ -24,7 +26,6 @@ export function generatePrompt(description: string, scopeIndex: number, intensit
     **Fidelity:** High
     **Plot Consistency:** High
     Apply these changes to the following Text: ${editorText}`;
-    console.log(prompt);
     return prompt;
 }
 
@@ -32,10 +33,34 @@ export const ChangeCreator = ({ editorText = '' }: { editorText?: string }) => {
     const [intensityIndex, setIntensityIndex] = useState(2); // Default to "Cobblestone"
     const [scopeIndex, setScopeIndex] = useState(1); // Default to "Pond"
     const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
+    const [message, setMessage] = useState("");
+    const [chatLog, setChatLog] = useState<Message[]>([]);  
 
     const handleIntensityChange = (e: ChangeEvent<HTMLInputElement>) => {
         setIntensityIndex(Number(e.target.value));
     };
+
+    
+
+    const sendMessage = async () => {
+        setMessage(generatePrompt(descriptionRef.current?.value || '', scopeIndex, intensityIndex, editorText));
+        console.log("Generated Prompt:", message);
+        if(!message.trim()) return;
+
+        const userMessage = { sender: 'You', text: message };
+        setChatLog((prev) => [...prev, userMessage]);
+        setMessage("");
+
+        const res = await fetch('http://localhost:4000/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message })
+        });
+
+        const messageData = await res.json();
+        setChatLog((prev) => [...prev, { sender: 'Bot', text: messageData.reply }]);
+    };
+
 
   return (
     <div
@@ -97,7 +122,7 @@ export const ChangeCreator = ({ editorText = '' }: { editorText?: string }) => {
             </span>
             </div>
             <br />
-              <input type="submit" value="Throw Stone" id="change-submit" onClick={() => generatePrompt(descriptionRef.current?.value || '', scopeIndex, intensityIndex, editorText)} />
+              <input type="submit" value="Throw Stone" id="change-submit" onClick={() => sendMessage()} />
        </div>
        
     </div>
