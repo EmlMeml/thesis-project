@@ -34,7 +34,8 @@ export const TextNav: React.FC<TextNavProps> = ({ content = [], onSegmentClick }
             {segments.length > 0 ? (
                 segments.map((text, index) => {
                     const textLength = text.trim().length;
-                    const value = Math.min(100, Math.max(10, textLength * 4))/2; // Normalize value to a range of 10-100 and divide by 2 for scaling
+                    const value = Math.min(Math.max( textLength * 4))/1000; // Normalize value to a range of 10-100 and divide by 2 for scaling
+                    console.log(`Length: ${textLength}, Value: ${value}`);
 
                     return (
                         <TextSegment

@@ -1,5 +1,4 @@
 import React from "react";
-// @ts-ignore: side-effect CSS import without declaration file
 import './../css/textSegmentAnimation.css';
 
 interface TextSegmentProps {
@@ -52,6 +51,7 @@ export const TextSegment: React.FC<TextSegmentProps> = ({
                 ['--ripple-duration' as any]: `${animationDuration}s`,
             } as React.CSSProperties}
         >
+            {charCount}
             <div className="reg t-1" style={layerStyle('0s')}></div>
             <div className="reg t-2" style={layerStyle('0.6s')}></div>
             <div className="reg t-3" style={layerStyle('1.2s')}></div>
