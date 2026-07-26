@@ -1,4 +1,5 @@
 import React from "react";
+// @ts-ignore: side-effect CSS import without declaration file
 import './../css/textSegmentAnimation.css';
 
 interface TextSegmentProps {
