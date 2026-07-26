@@ -185,9 +185,7 @@ function TextEditor({ editor,  onFileLoad }) {
     <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('paragraph'); }}>Paragraph</button>
     <button className="toolbarButton" onPointerDown={() => makeAWave()}>Make A Wave!</button>
     <button className="toolbarButton" onPointerDown={() => stopAnimation()}>Stop Animation</button>
-    <div style={{ position: 'relative', left:'510px', bottom:'3px'}}>
-      <FileUploader onTextLoad={onFileLoad} />
-    </div> 
+    <FileUploader onTextLoad={onFileLoad} />
   </div>
   <Editable className="editorEditable" onFileLoad={onFileLoad} onKeyDown={onKeyDown} onPaste={onPaste} renderLeaf={renderLeaf} renderElement={renderElement} placeholder="Begin your Story..."/>
 </div>;

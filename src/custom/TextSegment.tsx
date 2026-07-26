@@ -1,45 +1,59 @@
 import React from "react";
+import './../css/textSegmentAnimation.css';
 
 interface TextSegmentProps {
     text?: string;
     minWidth?: number;
     maxWidth?: number;
     height?: number;
+    isChanged?: boolean;
+    value?: number;
+    onClick?: (text: string) => void;
 }
+
+
 
 export const TextSegment: React.FC<TextSegmentProps> = ({
     text = "",
-    minWidth = 8,
+    minWidth = 16,
     height = 64,
-    maxWidth = 260
+    isChanged,
+    value = 0,
+    onClick,
 }) => {
     const visibleText = text.trim() || "...";
     const charCount = visibleText.replace(/\s+/g, "").length;
+    const isCurrentlyChanged = Boolean(isChanged);
+    const normalizedValue = Math.min(100, Math.max(0, value));
+    const animationDuration = Math.max(0.8, 3.2 - (normalizedValue / 100) * 2.4);
 
-    const width = Math.min(maxWidth, Math.max(minWidth, charCount * 7 + 24));
+    const width = Math.min(charCount, Math.max(minWidth, charCount * 8)); 
+    const layerStyle = (delay: string) => ({
+        ['--ripple-delay' as any]: delay,
+    } as React.CSSProperties);
 
     return (
         <div
             id="text-segment"
-            className="text-segment"
+            className={`text-segment${isCurrentlyChanged ? " changed" : ""}`}
+            onClick={() => onClick?.(visibleText)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onClick?.(visibleText);
+                }
+            }}
             style={{
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "flex-start",
                 width,
                 height,
-                padding: "6px 8px",
-                margin: "2px",
-                borderRadius: "8px",
-                backgroundColor: "#e8f0f7",
-                border: "1px solid #cad9e4",
-                boxSizing: "border-box",
-                whiteSpace: "pre-wrap",
-                overflow: "hidden",
-                fontSize: "14px",
-                lineHeight: 1.3,
-            }}
+                ['--ripple-duration' as any]: `${animationDuration}s`,
+            } as React.CSSProperties}
         >
+            <div className="reg t-1" style={layerStyle('0s')}></div>
+            <div className="reg t-2" style={layerStyle('0.6s')}></div>
+            <div className="reg t-3" style={layerStyle('1.2s')}></div>
         </div>
     );
 };

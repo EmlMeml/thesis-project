@@ -1,0 +1,47 @@
+.text-segment {
+    position: relative;
+    display: block;
+    padding: 6px 8px;
+    margin: 2px;
+    border-radius: 8px;   
+    border: 1px solid #6791b2;
+    background-color: #dde7ee;
+    box-sizing: border-box;
+    white-space: pre-wrap;
+    overflow: hidden;
+    cursor: pointer;
+    user-select: none;
+   
+}
+
+.reg {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    border-radius: 80px;
+    background-color: #9ab6cb;
+    box-sizing: border-box;
+    white-space: pre-wrap;
+    overflow: hidden;
+    cursor: pointer;
+    user-select: none;
+    opacity: 0;
+    transform: scale(0);
+    animation: none;
+}
+
+.text-segment.changed .reg {
+    animation: ripple var(--ripple-duration, 2s) ease-in-out var(--ripple-delay, 0s) infinite;
+}
+
+@keyframes ripple {
+    0% {
+        opacity: 1;
+        transform: scale(0);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1);
+    }
+}

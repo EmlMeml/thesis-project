@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { createEditor, Descendant } from "slate";
-import { Slate, withReact } from "slate-react";
+import { createEditor, Descendant, Editor, Transforms, Text } from "slate";
+import { ReactEditor, Slate, withReact } from "slate-react";
 import TextEditor from "./advancedEditor";
 import FileUploader from "./FileUploader";
 // @ts-ignore: Allow side-effect CSS import without type declarations
@@ -9,6 +9,7 @@ interface MyEditorProps {
   fileText?: string;
   onContentChange?: (value: Descendant[]) => void;
   onFileLoad?: (value: Descendant[]) => void;
+  activeSegmentText?: string;
 }
 
 const defaultValue = [
@@ -22,7 +23,7 @@ const defaultValue = [
   },
 ] as unknown as Descendant[];
 
-export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, onFileLoad }) => {
+export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, onFileLoad, activeSegmentText = "" }) => {
   const [editor] = useState(() => withReact(createEditor()));
   const [value, setValue] = useState<Descendant[]>(defaultValue);
   const [editorKey, setEditorKey] = useState(0);
@@ -58,6 +59,43 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
     setValue(newValue);
     onContentChange?.(newValue);
   };
+
+  useEffect(() => {
+    if (!activeSegmentText) {
+      return;
+    }
+
+    const targetText = activeSegmentText.trim();
+    if (!targetText) {
+      return;
+    }
+
+    let foundPath: number[] | null = null;
+    for (const [node, path] of Editor.nodes(editor, {
+      match: (n) => Text.isText(n),
+    })) {
+      if (node.text === targetText) {
+        foundPath = path;
+        break;
+      }
+    }
+
+    if (!foundPath) {
+      return;
+    }
+
+    const start = { path: foundPath, offset: 0 };
+    const end = { path: foundPath, offset: targetText.length };
+    Transforms.select(editor, { anchor: start, focus: end });
+    ReactEditor.focus(editor);
+
+    requestAnimationFrame(() => {
+      const editable = document.querySelector('.editorEditable');
+      if (editable instanceof HTMLElement) {
+        editable.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+  }, [activeSegmentText, editor]);
 
   return (
     <Slate

@@ -48,6 +48,12 @@ body{
   right: 16px;
 }
 
+#text-segment:hover {
+  background-color: #6791b2;
+  border:#3c5d76;
+  cursor: pointer;
+}
+
 #text-nav { 
   position: relative;
   top: 0px;
@@ -87,6 +93,12 @@ body{
   border-radius: 4px;
   background-color: #fff;
 }
+
+/* .editorEditable span:hover {
+  background-color: #b5cad9;
+  border:#3c5d76;
+  cursor: pointer;
+} */
 
 .toolbarButton{
   border: 0px solid transparent;

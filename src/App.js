@@ -8,6 +8,7 @@ import { MyChat } from './custom/Chat.tsx';
 import { TextPreview } from './custom/TextPreview.tsx';
 import { TextNav } from './custom/TextNav.tsx';
 import { ChangeCreator } from './custom/ChangeCreator.tsx';
+import { Grid, Stack } from "@mui/material";
 
 function textToSlateValue(text) {
   if (!text) {
@@ -28,25 +29,33 @@ function textToSlateValue(text) {
 function App() {
   const [editorContent, setEditorContent] = useState([]);
   const [fileText, setFileText] = useState('');
+  const [activeSegmentText, setActiveSegmentText] = useState('');
 
   const handleFileLoad = (text) => {
     setFileText(text);
   };
 
+  const handleSegmentClick = (text) => {
+    setActiveSegmentText(text);
+  };
+
   return (
-    <div className="App">
+    <Stack>
+      <Grid className="App" container direction="column">
       <TopBar/>
-      <div id="main-content">
-        <div id="text-navigation">
-          <TextNav content={editorContent} />
-        </div>
-        <div id="editor-container">
-          <MyEditor fileText={fileText} onContentChange={setEditorContent} onFileLoad={handleFileLoad}  />
-          <ChangeCreator />
-        </div>
-        <MyChat />
-      </div>
-    </div>
+        <Grid id="main-content" container size={13}>
+          <Grid id="text-navigation" container size={9}>
+            <TextNav content={editorContent} onSegmentClick={handleSegmentClick} />
+          </Grid>
+          <Grid id="editor-container" container size={9} direction="row" >
+            <MyEditor fileText={fileText} onContentChange={setEditorContent} onFileLoad={handleFileLoad} activeSegmentText={activeSegmentText} />
+            <ChangeCreator />
+          </Grid>
+          <MyChat />
+      </Grid>
+    </Grid>
+    </Stack>
+    
   );
 }
 
