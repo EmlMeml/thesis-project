@@ -15,9 +15,8 @@ interface TextSegmentProps {
 
 export const TextSegment: React.FC<TextSegmentProps> = ({
     text = "",
-    minWidth = 8,
+    minWidth = 16,
     height = 64,
-    maxWidth = 260,
     isChanged,
     value = 0,
     onClick,
@@ -28,7 +27,7 @@ export const TextSegment: React.FC<TextSegmentProps> = ({
     const normalizedValue = Math.min(100, Math.max(0, value));
     const animationDuration = Math.max(0.8, 3.2 - (normalizedValue / 100) * 2.4);
 
-    const width = Math.min(maxWidth, Math.max(minWidth, charCount * 7 + 24));
+    const width = Math.min(charCount, Math.max(minWidth, charCount * 8)); 
     const layerStyle = (delay: string) => ({
         ['--ripple-delay' as any]: delay,
     } as React.CSSProperties);
