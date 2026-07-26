@@ -18,13 +18,13 @@ export const TextSegment: React.FC<TextSegmentProps> = ({
     minWidth = 16,
     height = 64,
     isChanged,
-    value = 0,
+    value,
     onClick,
 }) => {
     const visibleText = text.trim() || "...";
     const charCount = visibleText.replace(/\s+/g, "").length;
     const isCurrentlyChanged = Boolean(isChanged);
-    const normalizedValue = Math.min(100, Math.max(0, value));
+    const normalizedValue = value !== undefined ? Math.min(10000, Math.max(1, value)) : 10; // Default to 1 if value is undefined
     const animationDuration = Math.max(0.8, 3.2 - (normalizedValue / 100) * 2.4);
 
     const width = Math.min(charCount, Math.max(minWidth, charCount * 8)); 
