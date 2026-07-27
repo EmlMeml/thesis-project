@@ -70,7 +70,6 @@ export const ChangeCreator = ({ editorText = '' }: { editorText?: string }) => {
         width: 'fit-content',
         maxWidth: '100%',
         minWidth: '280px',
-        height: '100%',
         paddingTop: '24px',
         paddingBottom: '16px',
         boxSizing: 'border-box',
@@ -80,7 +79,7 @@ export const ChangeCreator = ({ editorText = '' }: { editorText?: string }) => {
         <h3>Create your Stone</h3>
         <div id="change-description-container" className="change-elements">
             <p>Describe the changes you want to make:</p>
-            <textarea id="change-description" ref={descriptionRef} placeholder="Enter your change description here..." rows={5}></textarea>
+            <textarea id="change-description" ref={descriptionRef} placeholder="What do you want to Change?" rows={5}></textarea>
         </div>
         <div id="change-scope-container" className="change-elements">
             <p>Choose the scope of the changes:</p>

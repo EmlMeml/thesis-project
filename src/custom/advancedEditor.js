@@ -30,7 +30,7 @@ const Leaf = (props) => {
   );
 };
 
-function TextEditor({ editor,  onFileLoad }) {
+function TextEditor({ editor, activeSegmentText = "", onFileLoad }) {
   function changeMark(mark) {
     const [match] = Editor.nodes(editor, {
       match: (n) => n[mark] // check for existing formatting
@@ -45,15 +45,25 @@ function TextEditor({ editor,  onFileLoad }) {
   }
 
   const renderElement = useCallback((props) => {
+    const textContent = props.element.children
+      .map((child) => child.text || '')
+      .join('')
+      .trim();
+
+    const highlightStyle =
+      props.element.type === 'paragraph' && textContent === activeSegmentText
+        ? { backgroundColor: '#cad9e4' }
+        : {};
+
     switch (props.element.type) {
         case 'heading-one':
         return <h1 {...props.attributes}>{props.children}</h1>;
         case 'heading-two':
         return <h2 {...props.attributes}>{props.children}</h2>;
         default:
-        return <p {...props.attributes}>{props.children}</p>;
+        return <p {...props.attributes} style={highlightStyle}>{props.children}</p>;
     }
-}, []); 
+}, [activeSegmentText]); 
 
   const renderLeaf = useCallback((props) => {
     return <Leaf {...props} />;
@@ -152,14 +162,18 @@ function TextEditor({ editor,  onFileLoad }) {
                 color: "#000000",
                 textAlign: "start",
                 width:"70%",
+                height: "640px",
+                minHeight: "500px",
                 padding: "10px",
                 borderRadius: "5px",
                 border: "1px solid #cad9e4",
-                boxShadow: "0 2px 4px #cad9e4"
+                boxShadow: "0 2px 4px #cad9e4",
+                display: "flex",
+                flexDirection: "column",
+                boxSizing: "border-box"
             }}
-        >
-              
-  <div style={{ display: `flex`, backgroundColor: "#dfe8ef",marginBottom: "4px"}}>
+        >           
+  <div style={{ display: "flex", backgroundColor: "#dfe8ef", marginBottom: "4px", flexShrink: 0 }}>
 
     <IconButton style={{ color: "#1a2040" }} onPointerDown={(e) => {changeMark("bold");}}>
       <FormatBold />
@@ -187,7 +201,7 @@ function TextEditor({ editor,  onFileLoad }) {
     <button className="toolbarButton" onPointerDown={() => stopAnimation()}>Stop Animation</button>
     <FileUploader onTextLoad={onFileLoad} />
   </div>
-  <Editable className="editorEditable" onFileLoad={onFileLoad} onKeyDown={onKeyDown} onPaste={onPaste} renderLeaf={renderLeaf} renderElement={renderElement} placeholder="Begin your Story..."/>
+  <Editable className="editorEditable" style={{ flex: 1, minHeight: 0 }} onFileLoad={onFileLoad} onKeyDown={onKeyDown} onPaste={onPaste} renderLeaf={renderLeaf} renderElement={renderElement} placeholder="Begin your Story..."/>
 </div>;
 }
 

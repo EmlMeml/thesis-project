@@ -10,26 +10,25 @@ import { TextNav } from './custom/TextNav.tsx';
 import { ChangeCreator } from './custom/ChangeCreator.tsx';
 import { Grid, Stack } from "@mui/material";
 
-function textToSlateValue(text) {
-  if (!text) {
-    return [
-      {
-        type: 'paragraph',
-        children: [{ text: '' }],
-      },
-    ];
-  }
+export function serializeEditorContentToParagraphs(content) {
+  const paragraphs = (content || [])
+    .map((node) => {
+      if (!node || !Array.isArray(node.children)) {
+        return '';
+      }
 
-  return text.split(/\r?\n/).map((line) => ({
-    type: 'paragraph',
-    children: [{ text: line }],
-  }));
+      return node.children.map((child) => child.text || '').join('').trim();
+    })
+    .filter((paragraph) => paragraph.length > 0);
+
+  return paragraphs.map((paragraph) => `<p>${paragraph}</p>`).join('');
 }
 
 function App() {
   const [editorContent, setEditorContent] = useState([]);
   const [fileText, setFileText] = useState('');
   const [activeSegmentText, setActiveSegmentText] = useState('');
+  const [previousVersions, setPreviousVersions] = useState([]);
   const editorText = editorContent
     .map((node) => (node.children ? node.children.map((child) => child.text).join('') : ''))
     .join('\n');
@@ -42,19 +41,29 @@ function App() {
     setActiveSegmentText(text);
   };
 
+  const handleAiReply = (replyText) => {
+    if (!replyText) {
+      console.log("No reply text provided. Skipping saving previous version.");
+      return;
+    }
+
+    const previousVersion = serializeEditorContentToParagraphs(editorContent);
+    setPreviousVersions((prev) => [...prev, previousVersion || '<p></p>']);
+    setFileText(replyText);
+  };
+
   return (
     <Stack>
       <Grid className="App" container direction="column">
       <TopBar/>
-        <Grid id="main-content" container size={13}>
+        <Grid id="main-content" container size={11}>
           <Grid id="text-navigation" container size={9}>
             <TextNav content={editorContent} onSegmentClick={handleSegmentClick} />
           </Grid>
-          <Grid id="editor-container" container size={9} direction="row" >
+          <Grid id="editor-container" container size={12} direction="row" >
             <MyEditor fileText={fileText} onContentChange={setEditorContent} onFileLoad={handleFileLoad} activeSegmentText={activeSegmentText} />
             <ChangeCreator editorText={editorText} />
           </Grid>
-          <MyChat />
       </Grid>
     </Grid>
     </Stack>

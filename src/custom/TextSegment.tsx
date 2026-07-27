@@ -32,11 +32,22 @@ export const TextSegment: React.FC<TextSegmentProps> = ({
         ['--ripple-delay' as any]: delay,
     } as React.CSSProperties);
 
+    function scrollToSegment(segmentText: string) {
+        const segmentElement = document.getElementById("text-segment");
+        console.log("Scrolling to segment with length:", segmentText.length);
+        if (segmentElement) {
+            segmentElement.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    }
+
     return (
         <div
             id="text-segment"
             className={`text-segment${isCurrentlyChanged ? " changed" : ""}`}
-            onClick={() => onClick?.(visibleText)}
+            onClick={(event) => {
+                onClick?.(visibleText);
+                event.currentTarget.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            }}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => {
@@ -51,7 +62,6 @@ export const TextSegment: React.FC<TextSegmentProps> = ({
                 ['--ripple-duration' as any]: `${animationDuration}s`,
             } as React.CSSProperties}
         >
-            {charCount}
             <div className="reg t-1" style={layerStyle('0s')}></div>
             <div className="reg t-2" style={layerStyle('0.6s')}></div>
             <div className="reg t-3" style={layerStyle('1.2s')}></div>
