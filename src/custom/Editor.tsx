@@ -97,8 +97,9 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
     }
   };
 
+  // Scroll to the active segment when it changes
   useEffect(() => {
-    console.log("Active segment text changed:", activeSegmentText);
+    //console.log("Active segment text changed:", activeSegmentText);
     
     if (!activeSegmentText) {
       return;
@@ -114,7 +115,7 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
     for (let i = 0; i < value.length; i++) {
       const node = value[i];
       const path = [i];
-      console.log(`# Inspecting node at path: ${path}, node:`, node);
+      //console.log(`# Inspecting node at path: ${path}, node:`, node);
       if(SlateElement.isElement(node) && Editor.isBlock(editor, node)) {
         
         try {
@@ -122,21 +123,21 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
             .map((c: any) => (typeof c.text === 'string' ? c.text : ''))
             .join('')
             .trim();
-          console.log('Full text of node at path:', path, 'is:', fullText);
+          //console.log('Full text of node at path:', path, 'is:', fullText);
           if (!fullText){
-            console.log('Skipping empty block at path:', path);
+            //console.log('Skipping empty block at path:', path);
             continue;
           }
 
           if (fullText === targetText || fullText.includes(targetText)) {
-            console.log('Found matching block at path:', path, 'fullText:', fullText);
+            //console.log('Found matching block at path:', path, 'fullText:', fullText);
             // find first child index that contains text to build a text-node path
             const childIndex = (node as any).children.findIndex((c: any) => typeof c.text === 'string' && c.text.trim().length > 0);
             foundPath = childIndex >= 0 ? path.concat(childIndex) : path.concat(0);
             break;
-          }else {
+          }/* else {
             console.log('No match for block at path:', path, 'fullText:', fullText);
-          }
+          } */
         } catch (err) {
           // ignore and continue searching
           console.warn('Error while inspecting node for match', err);

@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Editor, Transforms, Text, Range, Element as SlateElement } from "slate";
 import { Editable, ReactEditor } from "slate-react";
 import { IconButton } from "@mui/material";
@@ -31,6 +31,14 @@ const Leaf = (props) => {
 };
 
 function TextEditor({ editor, activeSegmentText = "", onFileLoad }) {
+  const [flashText, setFlashText] = useState("");
+
+  useEffect(() => {
+    if (!activeSegmentText) return;
+    setFlashText(activeSegmentText);
+    const t = setTimeout(() => setFlashText(""), 1000);
+    return () => clearTimeout(t);
+  }, [activeSegmentText]);
   function changeMark(mark) {
     const [match] = Editor.nodes(editor, {
       match: (n) => n[mark] // check for existing formatting
@@ -51,9 +59,9 @@ function TextEditor({ editor, activeSegmentText = "", onFileLoad }) {
       .trim();
 
     const highlightStyle =
-      props.element.type === 'paragraph' && textContent === activeSegmentText
-        ? { backgroundColor: '#cad9e4' }
-        : {};
+      props.element.type === 'paragraph' && textContent === flashText
+        ? { backgroundColor: '#cad9e4', transition: 'background-color 0.25s ease' }
+        : { backgroundColor: 'transparent', transition: 'background-color 0.25s ease' };
 
     switch (props.element.type) {
         case 'heading-one':
@@ -63,7 +71,7 @@ function TextEditor({ editor, activeSegmentText = "", onFileLoad }) {
         default:
         return <p {...props.attributes} style={highlightStyle}>{props.children}</p>;
     }
-}, [activeSegmentText]); 
+}, [flashText]); 
 
   const renderLeaf = useCallback((props) => {
     return <Leaf {...props} />;

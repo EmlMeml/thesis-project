@@ -5,7 +5,6 @@ import React, { useState } from 'react';
 import TopBar from './custom/TopBar.js';
 import { MyEditor } from './custom/Editor.tsx';
 import { MyChat } from './custom/Chat.tsx';
-import { TextPreview } from './custom/TextPreview.tsx';
 import { TextNav } from './custom/TextNav.tsx';
 import { ChangeCreator } from './custom/ChangeCreator.tsx';
 import { Grid, Stack } from "@mui/material";
