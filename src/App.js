@@ -61,7 +61,7 @@ function App() {
           </Grid>
           <Grid id="editor-container" container size={12} direction="row" >
             <MyEditor fileText={fileText} onContentChange={setEditorContent} onFileLoad={handleFileLoad} activeSegmentText={activeSegmentText} />
-            <ChangeCreator editorText={editorText} />
+            <ChangeCreator editorText={editorText} onTextReplace={handleAiReply} />
           </Grid>
       </Grid>
     </Grid>

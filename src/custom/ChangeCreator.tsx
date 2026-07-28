@@ -29,7 +29,7 @@ export function generatePrompt(description: string, scopeIndex: number, intensit
     return prompt;
 }
 
-export const ChangeCreator = ({ editorText = '' }: { editorText?: string }) => {
+export const ChangeCreator = ({ editorText = '', onTextReplace }: { editorText?: string; onTextReplace?: (text: string) => void }) => {
     const [intensityIndex, setIntensityIndex] = useState(2); // Default to "Cobblestone"
     const [scopeIndex, setScopeIndex] = useState(1); // Default to "Pond"
     const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
@@ -43,22 +43,32 @@ export const ChangeCreator = ({ editorText = '' }: { editorText?: string }) => {
     
 
     const sendMessage = async () => {
-        setMessage(generatePrompt(descriptionRef.current?.value || '', scopeIndex, intensityIndex, editorText));
-        console.log("Generated Prompt:", message);
-        if(!message.trim()) return;
+        if(!descriptionRef.current?.value){
+            return
+        }
 
-        const userMessage = { sender: 'You', text: message };
-        setChatLog((prev) => [...prev, userMessage]);
+        const prompt = generatePrompt(descriptionRef.current.value, scopeIndex, intensityIndex, editorText);
+        setMessage(prompt);
+        if(!prompt.trim()) return;
+
+        const userMessage = { sender: 'You', text: prompt };
+        //setChatLog((prev) => [...prev, userMessage]);
         setMessage("");
 
         const res = await fetch('http://localhost:4000/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message })
+        body: JSON.stringify({ message: prompt })
         });
 
         const messageData = await res.json();
-        setChatLog((prev) => [...prev, { sender: 'Bot', text: messageData.reply }]);
+        const replyText = messageData?.reply || '';
+
+        if (replyText && onTextReplace) {
+            onTextReplace(replyText);
+        }
+        
+        //setChatLog((prev) => [...prev, { sender: 'Bot', text: replyText }]);
     };
 
 
