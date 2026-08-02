@@ -7,6 +7,7 @@ import { MyEditor } from './custom/Editor.tsx';
 import { MyChat } from './custom/Chat.tsx';
 import { TextNav } from './custom/TextNav.tsx';
 import { ChangeCreator } from './custom/ChangeCreator.tsx';
+import { AccteptBtn } from './custom/AccteptBtn.tsx';
 import { Grid, Stack } from "@mui/material";
 
 export function serializeEditorContentToParagraphs(content) {
@@ -58,6 +59,11 @@ function App() {
 
   const handleSegmentClick = (text) => {
     setActiveSegmentText(text);
+  };
+
+  const handleAcceptChanges = () => {
+    setChangedSegmentTexts([]);
+    setActiveSegmentText('');
   };
 
   const handleAiReply = (replyText) => {
@@ -125,12 +131,20 @@ function App() {
       <Grid className="App" container direction="column">
       <TopBar/>
         <Grid id="main-content" container size={11}>
-          <Grid id="text-navigation" container size={9}>
-            <TextNav content={editorContent} onSegmentClick={handleSegmentClick} changedTexts={changedSegmentTexts} />
+          <Grid id="text-navigation" container size={9} direction="row">
+            <Grid item style={{ flex: 1, overflowY: "auto" }}>
+              <TextNav content={editorContent} onSegmentClick={handleSegmentClick} changedTexts={changedSegmentTexts} />
+            </Grid>
+            <Grid item style={{marginTop:"32px"}}>
+              <AccteptBtn onClick={handleAcceptChanges} />
+            </Grid>
           </Grid>
           <Grid id="editor-container" container size={12} direction="row" >
             <MyEditor fileText={fileText} onContentChange={setEditorContent} onFileLoad={handleFileLoad} activeSegmentText={activeSegmentText} />
-            <ChangeCreator editorText={editorText} onTextReplace={handleAiReply} />
+            <Stack spacing={1} style={{ marginLeft: 8 }}>
+              <ChangeCreator editorText={editorText} onTextReplace={handleAiReply} />
+              
+            </Stack>
           </Grid>
       </Grid>
     </Grid>

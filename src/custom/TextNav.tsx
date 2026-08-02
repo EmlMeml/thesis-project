@@ -54,6 +54,7 @@ export const TextNav: React.FC<TextNavProps> = ({ content = [], onSegmentClick, 
             ) : (
                 <p style={{ margin: 0, color: '#666' }}>No text segments yet.</p>
             )}
+        
         </div>
     );
 };   
