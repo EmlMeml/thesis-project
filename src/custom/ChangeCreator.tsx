@@ -1,4 +1,5 @@
 import React, { ChangeEvent, useState, useRef } from 'react';
+import InfoBtn from './InfoBtn.tsx';
 import StoneIcon from '../img/stone.svg';
 import BoulderIcon from '../img/bolder.svg';
 import CobblestoneIcon from '../img/cobble.svg';
@@ -7,6 +8,7 @@ import SandIcon from '../img/sand.svg';
 import PuddleIcon from '../img/puddle.svg';
 import PondIcon from '../img/pond.svg';
 import LakeIcon from '../img/lake.svg';
+import InfoIcon from '../img/info.svg';
 
 const scopeMapping = ['Puddle', 'Pond', 'Lake'];
 const scopeIcons = [PuddleIcon, PondIcon, LakeIcon];
@@ -34,16 +36,14 @@ export const ChangeCreator = ({ editorText = '', onTextReplace }: { editorText?:
     const [scopeIndex, setScopeIndex] = useState(1); // Default to "Pond"
     const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
     const [message, setMessage] = useState("");
-    const [chatLog, setChatLog] = useState<Message[]>([]);  
 
     const handleIntensityChange = (e: ChangeEvent<HTMLInputElement>) => {
         setIntensityIndex(Number(e.target.value));
     };
 
-    
-
     const sendMessage = async () => {
         if(!descriptionRef.current?.value){
+            console.warn('No Change named!');
             return
         }
 
@@ -62,13 +62,20 @@ export const ChangeCreator = ({ editorText = '', onTextReplace }: { editorText?:
         });
 
         const messageData = await res.json();
-        const replyText = messageData?.reply || '';
 
+        //TODO: look for specific changes and only change that -> first step check if a paragraph changed
+        console.log("MessageData - Reply: ",messageData.reply);
+        let replyText = '';
+        if(!messageData?.reply){
+            replyText = editorText;
+            console.warn('No Reply Text Found!');
+        }else{
+            replyText = messageData.reply;       
+        }
         if (replyText && onTextReplace) {
             onTextReplace(replyText);
         }
-        
-        //setChatLog((prev) => [...prev, { sender: 'Bot', text: replyText }]);
+  
     };
 
 
@@ -92,7 +99,10 @@ export const ChangeCreator = ({ editorText = '', onTextReplace }: { editorText?:
             <textarea id="change-description" ref={descriptionRef} placeholder="What do you want to Change?" rows={5}></textarea>
         </div>
         <div id="change-scope-container" className="change-elements">
-            <p>Choose the scope of the changes:</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', paddingBottom:16  }}>
+                <p style={{ margin: 0 }}>Choose the scope of the changes:</p>
+                <InfoBtn type='scope' />
+            </div>
             <input 
                 type="range" 
                 id="change-scope-slider" 
@@ -109,7 +119,10 @@ export const ChangeCreator = ({ editorText = '', onTextReplace }: { editorText?:
             </div>
         </div>
         <div id="change-intensity-container" className="change-elements"> 
-            <p>Choose the intensity of the changes:</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', paddingBottom:16 }}>
+                <p style={{ margin: 0 }}>Choose the intensity of the changes:</p>
+                <InfoBtn type='intensity' />
+            </div>
             <input 
                 type="range" 
                 id="change-intensity"  

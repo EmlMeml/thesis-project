@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Descendant } from 'slate';
 import { TextSegment } from './TextSegment.tsx';
 
@@ -17,6 +17,8 @@ export const TextNav: React.FC<TextNavProps> = ({ content = [], onSegmentClick }
             .filter((child: any) => typeof child?.text === 'string' && child.text.trim().length > 0)
             .map((child: any) => child.text);
     });
+
+    const [isChanged, setIsChanged] = useState(false);
 
     return (
         <div
@@ -40,7 +42,7 @@ export const TextNav: React.FC<TextNavProps> = ({ content = [], onSegmentClick }
                             key={`${text}-${index}`}
                             text={text}
                             onClick={onSegmentClick}
-                            isChanged={true}
+                            isChanged={isChanged}
                             value={value}
                         />
                     );

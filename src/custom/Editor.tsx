@@ -63,18 +63,18 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
     if (fileText === undefined) {
       return;
     }
-
+    console.log("FileText:", fileText);
     const loadedValue = fileTextToSlateValue(fileText);
     const currentValue = editor.children;
 
-    console.log("Current Value:", currentValue);
-    console.log("Loaded Value:", loadedValue);
-
     if (JSON.stringify(currentValue) !== JSON.stringify(loadedValue)) {
       resetSelectionIfNeeded();
+      editor.children = loadedValue as Descendant[];
+      editor.onChange();
       setValue(loadedValue);
       setEditorKey((prev) => prev + 1);
       onContentChange?.(loadedValue);
+      handleChange(loadedValue);
     }
   }, [fileText, editor, onContentChange]);
 
@@ -99,14 +99,14 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
 
   // Scroll to the active segment when it changes
   useEffect(() => {
-    //console.log("Active segment text changed:", activeSegmentText);
+    console.log("## Active segment text changed:", activeSegmentText);
     
     if (!activeSegmentText) {
       return;
     }
 
     const targetText = activeSegmentText.trim();
-    console.log("Searching for target text in editor:", targetText);
+    console.log("## Searching for target text in editor:", targetText);
     if (!targetText) {
       return;
     }
@@ -126,7 +126,7 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
           if (!fullText){
             continue;
           }
-
+          console.log("## Checking node for match:", fullText);
           if (fullText === targetText || fullText.includes(targetText)) {
             // find first child index that contains text to build a text-node path
             const childIndex = (node as any).children.findIndex((c: any) => typeof c.text === 'string' && c.text.trim().length > 0);

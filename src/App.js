@@ -10,6 +10,20 @@ import { ChangeCreator } from './custom/ChangeCreator.tsx';
 import { Grid, Stack } from "@mui/material";
 
 export function serializeEditorContentToParagraphs(content) {
+  console.log("## Content: ",content);
+  if (typeof content === 'string') {
+    const paragraphs = content
+      .split(/\n/)
+      .map((paragraph) => paragraph.trim())
+      .filter((paragraph) => paragraph.length > 0);
+
+    return paragraphs.map((paragraph) => `<p>${paragraph}</p>`).join('');
+  }
+
+  if (!Array.isArray(content)) {
+    return '';
+  }
+
   const paragraphs = (content || [])
     .map((node) => {
       if (!node || !Array.isArray(node.children)) {
@@ -21,6 +35,11 @@ export function serializeEditorContentToParagraphs(content) {
     .filter((paragraph) => paragraph.length > 0);
 
   return paragraphs.map((paragraph) => `<p>${paragraph}</p>`).join('');
+}
+
+function extractParagraphsFromHtml(html = '') {
+  const matches = html.match(/<p>(.*?)<\/p>/gs) || [];
+  return matches.map((paragraph) => paragraph.replace(/^<p>|<\/p>$/g, '').trim());
 }
 
 function App() {
@@ -46,8 +65,54 @@ function App() {
       return;
     }
 
-    const previousVersion = serializeEditorContentToParagraphs(editorContent);
-    setPreviousVersions((prev) => [...prev, previousVersion || '<p></p>']);
+    //serialize both version to HTML to compare them
+    const previousVersionHtml = serializeEditorContentToParagraphs(editorContent);
+    const newVersionHtml = serializeEditorContentToParagraphs(replyText);
+    setPreviousVersions((prev) => [...prev, previousVersionHtml || '<p></p>']);
+
+    //extract paragraphs
+    const previousParagraphs = extractParagraphsFromHtml(previousVersionHtml);
+    const newParagraphs = extractParagraphsFromHtml(newVersionHtml);
+    const paragraphCount = Math.max(previousParagraphs.length, newParagraphs.length);
+    let highlightedParagraph = '';
+
+    for (let i = 0; i < paragraphCount; i++) {
+      const oldParagraph = previousParagraphs[i] || '';
+      const newParagraph = newParagraphs[i] || '';
+
+      if (!oldParagraph && newParagraph) {
+        console.log(`Paragraph ${i} added:`, newParagraph);
+        if (!highlightedParagraph) highlightedParagraph = newParagraph;
+        continue;
+      }
+
+      if (oldParagraph && !newParagraph) {
+        console.log(`Paragraph ${i} removed:`, oldParagraph);
+        continue;
+      }
+
+      if (oldParagraph === newParagraph) {
+        console.log(`Paragraph ${i} unchanged.`);
+        continue;
+      }
+
+      if (newParagraph.includes(oldParagraph) || oldParagraph.includes(newParagraph)) {
+        console.log(`Paragraph ${i} modified in place.`);
+        console.log('Old:', oldParagraph);
+        console.log('New:', newParagraph);
+        if (!highlightedParagraph) highlightedParagraph = newParagraph || oldParagraph;
+      } else {
+        console.log(`Paragraph ${i} changed completely.`);
+        console.log('Old:', oldParagraph);
+        console.log('New:', newParagraph);
+        if (!highlightedParagraph) highlightedParagraph = newParagraph || oldParagraph;
+      }
+    }
+
+    if (highlightedParagraph) {
+      setActiveSegmentText(highlightedParagraph);
+    }
+
     setFileText(replyText);
   };
 
