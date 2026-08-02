@@ -2,13 +2,19 @@ import React from 'react';
 import { Descendant } from 'slate';
 import { TextSegment } from './TextSegment.tsx';
 
+interface ChangedSegment {
+    text: string;
+    changeNumber?: number;
+}
+
 interface TextNavProps {
     content?: Descendant[];
     onSegmentClick?: (text: string) => void;
     changedTexts?: string[];
+    changedSegments?: ChangedSegment[];
 }
 
-export const TextNav: React.FC<TextNavProps> = ({ content = [], onSegmentClick, changedTexts = [] }) => {
+export const TextNav: React.FC<TextNavProps> = ({ content = [], onSegmentClick, changedTexts = [], changedSegments = [] }) => {
     const segments = content.flatMap((node: any) => {
         if (!node || !Array.isArray(node.children)) {
             return [];
@@ -23,31 +29,51 @@ export const TextNav: React.FC<TextNavProps> = ({ content = [], onSegmentClick, 
         .map((text) => text?.trim())
         .filter((text): text is string => Boolean(text));
 
+    const normalizedChangedSegments = (changedSegments || [])
+        .map((segment) => ({
+            text: segment?.text?.trim() || '',
+            changeNumber: typeof segment?.changeNumber === 'number' ? segment.changeNumber : 0,
+        }))
+        .filter((segment): segment is ChangedSegment & { text: string; changeNumber: number } => Boolean(segment.text));
+
     return (
         <div
             id="text-nav"
+            data-testid="text-nav"
             style={{
                 display: 'flex',
+                flexDirection: 'column',
                 flexWrap: 'nowrap',
-                alignItems: 'flex-start',
+                alignItems: 'stretch',
                 gap: '4px',
-                overflowX: 'auto',
-                overflowY: 'hidden',
-                whiteSpace: 'nowrap',
+                overflowX: 'hidden',
+                overflowY: 'auto',
+                whiteSpace: 'normal',
+                width: '92px',
+                minWidth: '92px',
+                maxWidth: '92px',
+                height: '640px',
+                minHeight: '100%',
+                maxHeight: '100%',
             }}
         >
             {segments.length > 0 ? (
                 segments.map((text, index) => {
                     const textLength = text.trim().length;
-                    const value = (textLength * 4)/1000; // Normalize value to a range of 10-100 and divide by 2 for scaling
-                    const isSegmentChanged = normalizedChangedTexts.includes(text.trim());
+                    const changedSegment = normalizedChangedSegments.find((segment) => segment.text === text.trim());
+                    const isSegmentChanged = normalizedChangedTexts.includes(text.trim()) || Boolean(changedSegment);
+                    const changeNumber = changedSegment?.changeNumber ?? 0;
+                    const segmentHeight = Math.max(48, Math.min(160, 24 + textLength * 4));
                     return (
                         <TextSegment
                             key={`${text}-${index}`}
                             text={text}
                             onClick={onSegmentClick}
                             isChanged={isSegmentChanged}
-                            value={value}
+                            changeNumber={changeNumber}
+                            height={segmentHeight}
+                            minWidth={74}
+                            maxWidth={74}
                         />
                     );
                 })

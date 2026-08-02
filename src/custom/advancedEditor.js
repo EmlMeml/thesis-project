@@ -60,8 +60,8 @@ function TextEditor({ editor, activeSegmentText = "", onFileLoad }) {
 
     const highlightStyle =
       props.element.type === 'paragraph' && textContent === flashText
-        ? { backgroundColor: '#b4cfe2', transition: 'background-color 4s ease-in-out' }
-        : { backgroundColor: 'transparent', transition: 'background-color 4s ease-in-out' };
+        ? { backgroundColor: '#89aac3', transition: 'background-color 4s ease' }
+        : { backgroundColor: 'transparent', transition: 'background-color 4s ease' };
 
     switch (props.element.type) {
         case 'heading-one':
@@ -170,7 +170,7 @@ function TextEditor({ editor, activeSegmentText = "", onFileLoad }) {
                 color: "#000000",
                 textAlign: "start",
                 width:"70%",
-                height: "640px",
+                height: "740px",
                 minHeight: "500px",
                 padding: "10px",
                 borderRadius: "5px",

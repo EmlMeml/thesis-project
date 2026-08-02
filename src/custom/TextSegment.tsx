@@ -7,7 +7,7 @@ interface TextSegmentProps {
     maxWidth?: number;
     height?: number;
     isChanged?: boolean;
-    value?: number;
+    changeNumber?: number;
     onClick?: (text: string) => void;
 }
 
@@ -15,19 +15,20 @@ interface TextSegmentProps {
 
 export const TextSegment: React.FC<TextSegmentProps> = ({
     text = "",
-    minWidth = 16,
-    height = 64,
+    minWidth = 76,
+    maxWidth = 76,
+    height = 48,
     isChanged,
-    value,
+    changeNumber,
     onClick,
 }) => {
     const visibleText = text.trim() || "...";
     const charCount = visibleText.replace(/\s+/g, "").length;
     const isCurrentlyChanged = Boolean(isChanged);
-    const normalizedValue = value !== undefined ? Math.min(10000, Math.max(1, value)) : 10; // Default to 1 if value is undefined
-    const animationDuration = Math.max(0.8, 3.2 - (normalizedValue / 100) * 2.4);
-
-    const width = Math.min(charCount, Math.max(minWidth, charCount * 8)); 
+    const normalizedValue = changeNumber !== undefined ? Math.min(10000, Math.max(1, changeNumber)) : 10;
+    const animationDuration = Math.max(0.8, 3.2 - (normalizedValue / 10000) * 2.4);
+    console.log('animationDuration:', animationDuration, 'changeNumber:', changeNumber);
+    const width = Math.max(minWidth, Math.min(maxWidth, charCount * 8));
     const layerStyle = (delay: string) => ({
         ['--ripple-delay' as any]: delay,
     } as React.CSSProperties);

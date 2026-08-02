@@ -43,6 +43,27 @@ function extractParagraphsFromHtml(html = '') {
   return matches.map((paragraph) => paragraph.replace(/^<p>|<\/p>$/g, '').trim());
 }
 
+function calculateChangeNumber(oldText = '', newText = '') {
+  if (!oldText && !newText) {
+    return 0;
+  }
+
+  if (!oldText || !newText) {
+    return Math.max(oldText.length, newText.length);
+  }
+
+  const maxLength = Math.max(oldText.length, newText.length);
+  let changeCount = 0;
+
+  for (let index = 0; index < maxLength; index += 1) {
+    if (oldText[index] !== newText[index]) {
+      changeCount += 1;
+    }
+  }
+
+  return changeCount;
+}
+
 function App() {
   const [editorContent, setEditorContent] = useState([]);
   const [fileText, setFileText] = useState('');
@@ -82,6 +103,7 @@ function App() {
     const newParagraphs = extractParagraphsFromHtml(newVersionHtml);
     const paragraphCount = Math.max(previousParagraphs.length, newParagraphs.length);
     const changedParagraphs = [];
+    const changedParagraphDetails = [];
 
     for (let i = 0; i < paragraphCount; i++) {
       const oldParagraph = previousParagraphs[i] || '';
@@ -90,6 +112,7 @@ function App() {
       if (!oldParagraph && newParagraph) {
         console.log(`Paragraph ${i} added:`, newParagraph);
         changedParagraphs.push(newParagraph);
+        changedParagraphDetails.push({ text: newParagraph, changeNumber: calculateChangeNumber('', newParagraph) });
         continue;
       }
 
@@ -103,22 +126,24 @@ function App() {
         continue;
       }
 
+      const changeNumber = calculateChangeNumber(oldParagraph, newParagraph);
+
       if (newParagraph.includes(oldParagraph) || oldParagraph.includes(newParagraph)) {
         console.log(`Paragraph ${i} modified in place.`);
-        console.log('Old:', oldParagraph);
-        console.log('New:', newParagraph);
+        console.log('Change number:', changeNumber);
         changedParagraphs.push(newParagraph);
+        changedParagraphDetails.push({ text: newParagraph, changeNumber });
       } else {
         console.log(`Paragraph ${i} changed completely.`);
-        console.log('Old:', oldParagraph);
-        console.log('New:', newParagraph);
+        console.log('Change number:', changeNumber);
         changedParagraphs.push(newParagraph);
+        changedParagraphDetails.push({ text: newParagraph, changeNumber });
       }
     }
 
-    if (changedParagraphs.length > 0) {
-      setChangedSegmentTexts(changedParagraphs);
-      setActiveSegmentText(changedParagraphs[0]);
+    if (changedParagraphDetails.length > 0) {
+      setChangedSegmentTexts(changedParagraphDetails);
+      setActiveSegmentText(changedParagraphDetails[0].text);
     } else {
       setChangedSegmentTexts([]);
     }
@@ -130,20 +155,15 @@ function App() {
     <Stack>
       <Grid className="App" container direction="column">
       <TopBar/>
-        <Grid id="main-content" container size={11}>
-          <Grid id="text-navigation" container size={9} direction="row">
-            <Grid item style={{ flex: 1, overflowY: "auto" }}>
-              <TextNav content={editorContent} onSegmentClick={handleSegmentClick} changedTexts={changedSegmentTexts} />
-            </Grid>
-            <Grid item style={{marginTop:"32px"}}>
+        <Grid id="main-content" container size={12} direction="row">
+          <Grid id="editor-container" container size={10} direction="row" >            
+            <Stack>
               <AccteptBtn onClick={handleAcceptChanges} />
-            </Grid>
-          </Grid>
-          <Grid id="editor-container" container size={12} direction="row" >
+              <TextNav content={editorContent} onSegmentClick={handleSegmentClick} changedTexts={changedSegmentTexts.map((segment) => segment.text)} changedSegments={changedSegmentTexts} />
+            </Stack>
             <MyEditor fileText={fileText} onContentChange={setEditorContent} onFileLoad={handleFileLoad} activeSegmentText={activeSegmentText} />
             <Stack spacing={1} style={{ marginLeft: 8 }}>
-              <ChangeCreator editorText={editorText} onTextReplace={handleAiReply} />
-              
+              <ChangeCreator editorText={editorText} onTextReplace={handleAiReply} />  
             </Stack>
           </Grid>
       </Grid>
