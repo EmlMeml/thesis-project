@@ -97,6 +97,7 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
     }
   };
 
+
   // Scroll to the active segment when it changes
   useEffect(() => {
     console.log("## Active segment text changed:", activeSegmentText);
@@ -145,9 +146,6 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
       return;
     }
 
-    const start = { path: foundPath, offset: 0 };
-    const end = { path: foundPath, offset: targetText.length };
-    //Transforms.select(editor, { anchor: start, focus: end });
     ReactEditor.focus(editor);
 
     requestAnimationFrame(() => {

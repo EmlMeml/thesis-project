@@ -47,6 +47,7 @@ function App() {
   const [fileText, setFileText] = useState('');
   const [activeSegmentText, setActiveSegmentText] = useState('');
   const [previousVersions, setPreviousVersions] = useState([]);
+  const [changedSegmentTexts, setChangedSegmentTexts] = useState([]);
   const editorText = editorContent
     .map((node) => (node.children ? node.children.map((child) => child.text).join('') : ''))
     .join('\n');
@@ -74,7 +75,7 @@ function App() {
     const previousParagraphs = extractParagraphsFromHtml(previousVersionHtml);
     const newParagraphs = extractParagraphsFromHtml(newVersionHtml);
     const paragraphCount = Math.max(previousParagraphs.length, newParagraphs.length);
-    let highlightedParagraph = '';
+    const changedParagraphs = [];
 
     for (let i = 0; i < paragraphCount; i++) {
       const oldParagraph = previousParagraphs[i] || '';
@@ -82,7 +83,7 @@ function App() {
 
       if (!oldParagraph && newParagraph) {
         console.log(`Paragraph ${i} added:`, newParagraph);
-        if (!highlightedParagraph) highlightedParagraph = newParagraph;
+        changedParagraphs.push(newParagraph);
         continue;
       }
 
@@ -100,17 +101,20 @@ function App() {
         console.log(`Paragraph ${i} modified in place.`);
         console.log('Old:', oldParagraph);
         console.log('New:', newParagraph);
-        if (!highlightedParagraph) highlightedParagraph = newParagraph || oldParagraph;
+        changedParagraphs.push(newParagraph);
       } else {
         console.log(`Paragraph ${i} changed completely.`);
         console.log('Old:', oldParagraph);
         console.log('New:', newParagraph);
-        if (!highlightedParagraph) highlightedParagraph = newParagraph || oldParagraph;
+        changedParagraphs.push(newParagraph);
       }
     }
 
-    if (highlightedParagraph) {
-      setActiveSegmentText(highlightedParagraph);
+    if (changedParagraphs.length > 0) {
+      setChangedSegmentTexts(changedParagraphs);
+      setActiveSegmentText(changedParagraphs[0]);
+    } else {
+      setChangedSegmentTexts([]);
     }
 
     setFileText(replyText);
@@ -122,7 +126,7 @@ function App() {
       <TopBar/>
         <Grid id="main-content" container size={11}>
           <Grid id="text-navigation" container size={9}>
-            <TextNav content={editorContent} onSegmentClick={handleSegmentClick} />
+            <TextNav content={editorContent} onSegmentClick={handleSegmentClick} changedTexts={changedSegmentTexts} />
           </Grid>
           <Grid id="editor-container" container size={12} direction="row" >
             <MyEditor fileText={fileText} onContentChange={setEditorContent} onFileLoad={handleFileLoad} activeSegmentText={activeSegmentText} />

@@ -60,8 +60,8 @@ function TextEditor({ editor, activeSegmentText = "", onFileLoad }) {
 
     const highlightStyle =
       props.element.type === 'paragraph' && textContent === flashText
-        ? { backgroundColor: '#cad9e4', transition: 'background-color 0.25s ease' }
-        : { backgroundColor: 'transparent', transition: 'background-color 0.25s ease' };
+        ? { backgroundColor: '#3d759c', transition: 'background-color 4s ease-in-out' }
+        : { backgroundColor: 'transparent', transition: 'background-color 4s ease-in-out' };
 
     switch (props.element.type) {
         case 'heading-one':
