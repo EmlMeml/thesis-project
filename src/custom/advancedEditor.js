@@ -60,14 +60,14 @@ function TextEditor({ editor, activeSegmentText = "", onFileLoad }) {
 
     const highlightStyle =
       props.element.type === 'paragraph' && textContent === flashText
-        ? { backgroundColor: '#3d759c', transition: 'background-color 4s ease-in-out' }
+        ? { backgroundColor: '#b4cfe2', transition: 'background-color 4s ease-in-out' }
         : { backgroundColor: 'transparent', transition: 'background-color 4s ease-in-out' };
 
     switch (props.element.type) {
         case 'heading-one':
-        return <h1 {...props.attributes}>{props.children}</h1>;
+        return <h1 {...props.attributes} style={highlightStyle}>{props.children}</h1>;
         case 'heading-two':
-        return <h2 {...props.attributes}>{props.children}</h2>;
+        return <h2 {...props.attributes} style={highlightStyle}>{props.children}</h2>;
         default:
         return <p {...props.attributes} style={highlightStyle}>{props.children}</p>;
     }
