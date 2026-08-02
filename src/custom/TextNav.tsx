@@ -63,7 +63,7 @@ export const TextNav: React.FC<TextNavProps> = ({ content = [], onSegmentClick, 
                     const changedSegment = normalizedChangedSegments.find((segment) => segment.text === text.trim());
                     const isSegmentChanged = normalizedChangedTexts.includes(text.trim()) || Boolean(changedSegment);
                     const changeNumber = changedSegment?.changeNumber ?? 0;
-                    const segmentHeight = Math.max(48, Math.min(160, 24 + textLength * 4));
+                    const segmentHeight = Math.max(16, Math.min(160, 16 + textLength * 0.5));
                     return (
                         <TextSegment
                             key={`${text}-${index}`}
