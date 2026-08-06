@@ -63,12 +63,11 @@ export const ChangeCreator = ({ editorText = '', onTextReplace }: { editorText?:
 
         const messageData = await res.json();
 
-        //TODO: look for specific changes and only change that -> first step check if a paragraph changed
-        console.log("MessageData - Reply: ",messageData.reply);
+        //console.log("MessageData - Reply: ",messageData.reply);
         let replyText = '';
         if(!messageData?.reply){
-            replyText = editorText;
-            console.warn('No Reply Text Found!');
+            window.alert('No Reply Text Found! Please Try again.');
+            replyText = editorText; // Fallback to original text if no reply is found
         }else{
             replyText = messageData.reply;       
         }

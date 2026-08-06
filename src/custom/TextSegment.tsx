@@ -27,7 +27,7 @@ export const TextSegment: React.FC<TextSegmentProps> = ({
     const isCurrentlyChanged = Boolean(isChanged);
     const normalizedValue = changeNumber !== undefined ? Math.min(10000, Math.max(1, changeNumber)) : 10;
     const animationDuration = Math.max(0.8, 3.2 - (normalizedValue / 10000) * 2.4);
-    console.log('animationDuration:', animationDuration, 'changeNumber:', changeNumber);
+    //console.log('animationDuration:', animationDuration, 'changeNumber:', changeNumber);
     const width = Math.max(minWidth, Math.min(maxWidth, charCount * 8));
     const layerStyle = (delay: string) => ({
         ['--ripple-delay' as any]: delay,

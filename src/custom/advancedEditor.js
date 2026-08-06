@@ -14,6 +14,7 @@ import './../css/App.css';
 import './../css/wave-test.css';
 import { makeAWave, stopAnimation } from "../animation.js";
 import FileUploader from "./../custom/FileUploader.tsx";
+import { InlineTextDiff } from "./TextDiff.tsx";
 
 const Leaf = (props) => {
   return (
@@ -62,6 +63,14 @@ function TextEditor({ editor, activeSegmentText = "", onFileLoad }) {
       props.element.type === 'paragraph' && textContent === flashText
         ? { backgroundColor: '#89aac3', transition: 'background-color 4s ease' }
         : { backgroundColor: 'transparent', transition: 'background-color 4s ease' };
+
+    if (props.element.diff) {
+      return (
+        <div {...props.attributes} style={{ ...highlightStyle, marginBottom: 8, padding: 8, borderRadius: 6, backgroundColor: 'transparent' }}>
+          <InlineTextDiff oldText={props.element.diff.oldText} newText={props.element.diff.newText} />
+        </div>
+      );
+    }
 
     switch (props.element.type) {
         case 'heading-one':

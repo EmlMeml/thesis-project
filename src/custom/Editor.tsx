@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { createEditor, Descendant, Editor, Element as SlateElement, Transforms, Text } from "slate";
 import { ReactEditor, Slate, withReact } from "slate-react";
 import TextEditor from "./advancedEditor";
-import FileUploader from "./FileUploader";
+import { InlineTextDiff } from "./TextDiff.tsx";
 // @ts-ignore: Allow side-effect CSS import without type declarations
 
 interface MyEditorProps {
@@ -10,6 +10,7 @@ interface MyEditorProps {
   onContentChange?: (value: Descendant[]) => void;
   onFileLoad?: (value: Descendant[]) => void;
   activeSegmentText?: string;
+  changedParagraphDiffs?: Array<{ key: string; oldText: string; newText: string }>;
 }
 
 const defaultValue = [
@@ -23,7 +24,7 @@ const defaultValue = [
   },
 ] as unknown as Descendant[];
 
-export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, onFileLoad, activeSegmentText = "" }) => {
+export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, onFileLoad, activeSegmentText = "", changedParagraphDiffs = [] }) => {
   const [editor] = useState(() => withReact(createEditor()));
   const [value, setValue] = useState<Descendant[]>(defaultValue);
   const [editorKey, setEditorKey] = useState(0);
@@ -58,6 +59,34 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
       }));
   };
 
+  const buildEditorValue = (baseValue: Descendant[], diffs: Array<{ key: string; oldText: string; newText: string }>): Descendant[] => {
+    if (!diffs.length) {
+      return baseValue;
+    }
+
+    const diffLookup = new Map(diffs.map((segment) => [segment.newText?.trim(), segment]));
+
+    return (baseValue as any[]).map((paragraph) => {
+      const paragraphText = (paragraph.children || [])
+        .map((child: any) => child.text || '')
+        .join('')
+        .trim();
+
+      const matchingDiff = diffLookup.get(paragraphText);
+      if (matchingDiff) {
+        return {
+          ...paragraph,
+          diff: {
+            oldText: matchingDiff.oldText || '',
+            newText: matchingDiff.newText || '',
+          },
+        };
+      }
+
+      return paragraph;
+    }) as Descendant[];
+  };
+
   //change Text in Editor
   useEffect(() => {
     if (fileText === undefined) {
@@ -65,18 +94,19 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
     }
     console.log("FileText:", fileText);
     const loadedValue = fileTextToSlateValue(fileText);
+    const mergedValue = buildEditorValue(loadedValue, changedParagraphDiffs);
     const currentValue = editor.children;
 
-    if (JSON.stringify(currentValue) !== JSON.stringify(loadedValue)) {
+    if (JSON.stringify(currentValue) !== JSON.stringify(mergedValue)) {
       resetSelectionIfNeeded();
-      editor.children = loadedValue as Descendant[];
+      editor.children = mergedValue as Descendant[];
       editor.onChange();
-      setValue(loadedValue);
+      setValue(mergedValue);
       setEditorKey((prev) => prev + 1);
-      onContentChange?.(loadedValue);
-      handleChange(loadedValue);
+      onContentChange?.(mergedValue);
+      handleChange(mergedValue);
     }
-  }, [fileText, editor, onContentChange]);
+  }, [fileText, editor, onContentChange, changedParagraphDiffs]);
 
   const handleChange = (newValue: Descendant[]) => {
     setValue(newValue);
@@ -100,14 +130,14 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
 
   // Scroll to the active segment when it changes
   useEffect(() => {
-    console.log("## Active segment text changed:", activeSegmentText);
+    //console.log("## Active segment text changed:", activeSegmentText);
     
     if (!activeSegmentText) {
       return;
     }
 
     const targetText = activeSegmentText.trim();
-    console.log("## Searching for target text in editor:", targetText);
+    //console.log("## Searching for target text in editor:", targetText);
     if (!targetText) {
       return;
     }
@@ -127,7 +157,7 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
           if (!fullText){
             continue;
           }
-          console.log("## Checking node for match:", fullText);
+          //console.log("## Checking node for match:", fullText);
           if (fullText === targetText || fullText.includes(targetText)) {
             // find first child index that contains text to build a text-node path
             const childIndex = (node as any).children.findIndex((c: any) => typeof c.text === 'string' && c.text.trim().length > 0);
@@ -142,7 +172,7 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
     }
 
     if (!foundPath || !Editor.hasPath(editor, foundPath)) {
-      console.warn("Could not find the text segment in the editor:", targetText);
+      //console.warn("Could not find the text segment in the editor:", targetText);
       return;
     }
 
