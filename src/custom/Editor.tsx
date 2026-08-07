@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { createEditor, Descendant, Editor, Element as SlateElement, Transforms, Text } from "slate";
 import { ReactEditor, Slate, withReact } from "slate-react";
 import TextEditor from "./advancedEditor";
+
 // @ts-ignore: Allow side-effect CSS import without type declarations
 
 interface MyEditorProps {

@@ -1,14 +1,13 @@
 import './css/App.css';
 import './css/wave-test.css';
 import './css/form.css';
-import React, { useState } from 'react';
-import TopBar from './custom/TopBar.js';
-import { MyEditor } from './custom/Editor.tsx';
-import { MyChat } from './custom/Chat.tsx';
-import { TextNav } from './custom/TextNav.tsx';
-import { ChangeCreator } from './custom/ChangeCreator.tsx';
-import { AccteptBtn } from './custom/AccteptBtn.tsx';
-import { Grid, Stack } from "@mui/material";
+import { useState } from 'react';
+import TopBar from './custom/TopBar';
+import { MyEditor } from './custom/Editor';
+import { TextNav } from './custom/TextNav';
+import { ChangeCreator } from './custom/ChangeCreator';
+import { AccteptBtn } from './custom/AccteptBtn';
+import { Box } from "@mui/material";
 
 export function serializeEditorContentToParagraphs(content) {
   //console.log("## Content: ",content);
@@ -39,7 +38,7 @@ export function serializeEditorContentToParagraphs(content) {
 }
 
 function extractParagraphsFromHtml(html = '') {
-  const matches = html.match(/<p>(.*?)<\/p>/gs) || [];
+  const matches = html.match(/<p>([\s\S]*?)<\/p>/g) || [];
   return matches.map((paragraph) => paragraph.replace(/^<p>|<\/p>$/g, '').trim());
 }
 
@@ -165,30 +164,34 @@ function App() {
   };
 
   return (
-    <Stack>
-      <Grid className="App" container direction="column">
-      <TopBar/>
-        <Grid id="main-content" container size={12} direction="row">
-          <Grid id="" container size={12} direction="row">
-            <TextNav content={editorContent} onSegmentClick={handleSegmentClick} changedTexts={changedSegmentTexts.map((segment) => segment.text)} changedSegments={changedSegmentTexts} />
-            <AccteptBtn onClick={handleAcceptChanges} />
-          </Grid>
-          <Grid id="editor-container" container size={12} direction="row" >                   
-              <MyEditor
-                fileText={fileText}
-                onContentChange={setEditorContent}
-                onFileLoad={handleFileLoad}
-                activeSegmentText={activeSegmentText}
-                changedParagraphDiffs={changedParagraphDiffs}
-              />
-            <Stack size={2} style={{ marginLeft: 8 }}>
-              <ChangeCreator editorText={editorText} onTextReplace={handleAiReply} />  
-            </Stack>
-          </Grid>
-      </Grid>
-    </Grid>
-    </Stack>
-    
+    <Box sx={{ width: '95%', padding: 2, display: 'flex', flexDirection: 'column', gap: 0 }}>
+      <TopBar />
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
+          <TextNav
+            content={editorContent}
+            onSegmentClick={handleSegmentClick}
+            changedTexts={changedSegmentTexts.map((segment) => segment.text)}
+            changedSegments={changedSegmentTexts}
+          />
+          <AccteptBtn onClick={handleAcceptChanges} />
+        </Box>
+
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 0, alignItems: 'flex-start' }}>
+          
+            <MyEditor
+              fileText={fileText}
+              onContentChange={setEditorContent}
+              onFileLoad={handleFileLoad}
+              activeSegmentText={activeSegmentText}
+              changedParagraphDiffs={changedParagraphDiffs}
+            />
+          
+            <ChangeCreator editorText={editorText} onTextReplace={handleAiReply} />
+          
+        </Box>
+      </Box>
+    </Box>
   );
 }
 
