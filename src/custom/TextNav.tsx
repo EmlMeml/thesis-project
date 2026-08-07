@@ -1,6 +1,6 @@
 import React from 'react';
 import { Descendant } from 'slate';
-import { TextSegment } from './TextSegment.tsx';
+import { TextSegment } from './TextSegment';
 
 interface ChangedSegment {
     text: string;
@@ -42,19 +42,18 @@ export const TextNav: React.FC<TextNavProps> = ({ content = [], onSegmentClick, 
             data-testid="text-nav"
             style={{
                 display: 'flex',
-                flexDirection: 'column',
+                flexDirection: 'row',
                 flexWrap: 'nowrap',
                 alignItems: 'stretch',
                 gap: '4px',
+                paddingTop: '2px',
                 overflowX: 'hidden',
-                overflowY: 'auto',
+                overflowY: 'hidden',
                 whiteSpace: 'normal',
-                width: '92px',
-                minWidth: '92px',
-                maxWidth: '92px',
-                height: '640px',
-                minHeight: '100%',
-                maxHeight: '100%',
+                width: '640px',
+                height: '80px',
+                minWidth: '80%',
+                maxWidth: '80%',
             }}
         >
             {segments.length > 0 ? (
@@ -63,7 +62,7 @@ export const TextNav: React.FC<TextNavProps> = ({ content = [], onSegmentClick, 
                     const changedSegment = normalizedChangedSegments.find((segment) => segment.text === text.trim());
                     const isSegmentChanged = normalizedChangedTexts.includes(text.trim()) || Boolean(changedSegment);
                     const changeNumber = changedSegment?.changeNumber ?? 0;
-                    const segmentHeight = Math.max(16, Math.min(160, 16 + textLength * 0.5));
+                    const segmentWidth = Math.max(16, Math.min(160, 16 + textLength * 0.5));
                     return (
                         <TextSegment
                             key={`${text}-${index}`}
@@ -71,9 +70,9 @@ export const TextNav: React.FC<TextNavProps> = ({ content = [], onSegmentClick, 
                             onClick={onSegmentClick}
                             isChanged={isSegmentChanged}
                             changeNumber={changeNumber}
-                            height={segmentHeight}
-                            minWidth={74}
-                            maxWidth={74}
+                            height={64}
+                            minWidth={segmentWidth}
+                            maxWidth={1000000}
                         />
                     );
                 })

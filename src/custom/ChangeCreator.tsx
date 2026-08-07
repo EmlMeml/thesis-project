@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useState, useRef } from 'react';
-import InfoBtn from './InfoBtn.tsx';
+import InfoBtn from './InfoBtn';
 import StoneIcon from '../img/stone.svg';
 import BoulderIcon from '../img/bolder.svg';
 import CobblestoneIcon from '../img/cobble.svg';
@@ -55,7 +55,7 @@ export const ChangeCreator = ({ editorText = '', onTextReplace }: { editorText?:
         //setChatLog((prev) => [...prev, userMessage]);
         setMessage("");
 
-        const res = await fetch('http://localhost:4000/api/chat', {
+        const res = await fetch('https://server-production-4846.up.railway.app/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: prompt })

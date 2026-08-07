@@ -15,9 +15,9 @@ interface TextSegmentProps {
 
 export const TextSegment: React.FC<TextSegmentProps> = ({
     text = "",
-    minWidth = 76,
-    maxWidth = 76,
-    height = 48,
+    minWidth = 24,
+    maxWidth = 1000000,
+    height = 64,
     isChanged,
     changeNumber,
     onClick,

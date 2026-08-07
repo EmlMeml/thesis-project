@@ -169,11 +169,11 @@ function App() {
       <Grid className="App" container direction="column">
       <TopBar/>
         <Grid id="main-content" container size={12} direction="row">
-          <Grid id="editor-container" container size={12} direction="row" >            
-            <Stack size={2}>
-              <AccteptBtn onClick={handleAcceptChanges} />
-              <TextNav content={editorContent} onSegmentClick={handleSegmentClick} changedTexts={changedSegmentTexts.map((segment) => segment.text)} changedSegments={changedSegmentTexts} />
-            </Stack>
+          <Grid id="" container size={12} direction="row">
+            <TextNav content={editorContent} onSegmentClick={handleSegmentClick} changedTexts={changedSegmentTexts.map((segment) => segment.text)} changedSegments={changedSegmentTexts} />
+            <AccteptBtn onClick={handleAcceptChanges} />
+          </Grid>
+          <Grid id="editor-container" container size={12} direction="row" >                   
               <MyEditor
                 fileText={fileText}
                 onContentChange={setEditorContent}

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { createEditor, Descendant, Editor, Element as SlateElement, Transforms, Text } from "slate";
 import { ReactEditor, Slate, withReact } from "slate-react";
 import TextEditor from "./advancedEditor";
-import { InlineTextDiff } from "./TextDiff.tsx";
 // @ts-ignore: Allow side-effect CSS import without type declarations
 
 interface MyEditorProps {
@@ -29,24 +28,26 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
   const [value, setValue] = useState<Descendant[]>(defaultValue);
   const [editorKey, setEditorKey] = useState(0);
 
-  const fileTextToSlateValue = (text: string) => {
+  const fileTextToSlateValue = (text: string): Descendant[] => {
     if (!text) {
       return [
         {
           type: 'paragraph',
           children: [{ text: '' }],
         },
-      ];
+      ] as Descendant[];
     }
     console.log("Converting file text to Slate value:", text);
     const trimmedText = text.trim();
     const paragraphMatches = trimmedText.match(/<p[^>]*>([\s\S]*?)<\/p>/gi);
 
     if (paragraphMatches && paragraphMatches.length > 0) {
-      return paragraphMatches.map((match) => ({
-        type: 'paragraph',
-        children: [{ text: match.replace(/<p[^>]*>/gi, '').replace(/<\/p>/gi, '').trim() }],
-      })).filter((paragraph) => paragraph.children[0].text.length > 0);
+      return paragraphMatches
+        .map((match) => ({
+          type: 'paragraph',
+          children: [{ text: match.replace(/<p[^>]*>/gi, '').replace(/<\/p>/gi, '').trim() }],
+        }))
+        .filter((paragraph) => paragraph.children[0].text.length > 0) as Descendant[];
     }
 
     return trimmedText
@@ -56,7 +57,7 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
       .map((line) => ({
         type: 'paragraph',
         children: [{ text: line }],
-      }));
+      })) as Descendant[];
   };
 
   const buildEditorValue = (baseValue: Descendant[], diffs: Array<{ key: string; oldText: string; newText: string }>): Descendant[] => {
