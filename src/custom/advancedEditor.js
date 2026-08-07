@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Editor, Transforms, Text, Range, Element as SlateElement } from "slate";
-import { Editable, ReactEditor } from "slate-react";
+import { Editable } from "slate-react";
 import { IconButton } from "@mui/material";
 import {
   FormatBold,
@@ -33,7 +33,6 @@ const Leaf = (props) => {
 
 function TextEditor({ editor, activeSegmentText = "", onFileLoad }) {
   const [flashText, setFlashText] = useState("");
-
   useEffect(() => {
     if (!activeSegmentText) return;
     setFlashText(activeSegmentText);

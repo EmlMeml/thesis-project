@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState, useRef } from 'react';
+import { ChangeEvent, useState, useRef } from 'react';
 import InfoBtn from './InfoBtn';
 import StoneIcon from '../img/stone.svg';
 import BoulderIcon from '../img/bolder.svg';
@@ -8,7 +8,6 @@ import SandIcon from '../img/sand.svg';
 import PuddleIcon from '../img/puddle.svg';
 import PondIcon from '../img/pond.svg';
 import LakeIcon from '../img/lake.svg';
-import InfoIcon from '../img/info.svg';
 
 const scopeMapping = ['Puddle', 'Pond', 'Lake'];
 const scopeIcons = [PuddleIcon, PondIcon, LakeIcon];
