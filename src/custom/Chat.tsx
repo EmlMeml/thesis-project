@@ -5,7 +5,11 @@ import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 
 type Message = { sender: string; text: string };
 
-export const MyChat = () => {
+type MyChatProps = {
+  onReplyReceived?: (reply: string) => void;
+};
+
+export const MyChat = ({ onReplyReceived }: MyChatProps) => {
   const [open, setOpen] = useState(false)
   const [message, setMessage] = useState("");
   const [chatLog, setChatLog] = useState<Message[]>([]);
@@ -24,7 +28,9 @@ export const MyChat = () => {
     });
 
     const messageData = await res.json();
-    setChatLog((prev) => [...prev, { sender: 'Bot', text: messageData.reply }]);
+    const replyText = messageData.reply || '';
+    setChatLog((prev) => [...prev, { sender: 'Bot', text: replyText }]);
+    onReplyReceived?.(replyText);
   };
 
   return (

@@ -1,5 +1,4 @@
 import React from "react";
-// @ts-ignore: side-effect CSS import without declaration file
 import './../css/textSegmentAnimation.css';
 
 interface TextSegmentProps {
@@ -8,7 +7,7 @@ interface TextSegmentProps {
     maxWidth?: number;
     height?: number;
     isChanged?: boolean;
-    value?: number;
+    changeNumber?: number;
     onClick?: (text: string) => void;
 }
 
@@ -16,28 +15,40 @@ interface TextSegmentProps {
 
 export const TextSegment: React.FC<TextSegmentProps> = ({
     text = "",
-    minWidth = 16,
+    minWidth = 24,
+    maxWidth = 1000000,
     height = 64,
     isChanged,
-    value = 0,
+    changeNumber,
     onClick,
 }) => {
     const visibleText = text.trim() || "...";
     const charCount = visibleText.replace(/\s+/g, "").length;
     const isCurrentlyChanged = Boolean(isChanged);
-    const normalizedValue = Math.min(100, Math.max(0, value));
-    const animationDuration = Math.max(0.8, 3.2 - (normalizedValue / 100) * 2.4);
-
-    const width = Math.min(charCount, Math.max(minWidth, charCount * 8)); 
+    const normalizedValue = changeNumber !== undefined ? Math.min(10000, Math.max(1, changeNumber)) : 10;
+    const animationDuration = Math.max(0.8, 3.2 - (normalizedValue / 10000) * 2.4);
+    //console.log('animationDuration:', animationDuration, 'changeNumber:', changeNumber);
+    const width = Math.max(minWidth, Math.min(maxWidth, charCount * 8));
     const layerStyle = (delay: string) => ({
         ['--ripple-delay' as any]: delay,
     } as React.CSSProperties);
+
+    function scrollToSegment(segmentText: string) {
+        const segmentElement = document.getElementById("text-segment");
+        console.log("Scrolling to segment with length:", segmentText.length);
+        if (segmentElement) {
+            segmentElement.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    }
 
     return (
         <div
             id="text-segment"
             className={`text-segment${isCurrentlyChanged ? " changed" : ""}`}
-            onClick={() => onClick?.(visibleText)}
+            onClick={(event) => {
+                onClick?.(visibleText);
+                event.currentTarget.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            }}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => {
