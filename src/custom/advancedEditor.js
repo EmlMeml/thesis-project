@@ -59,9 +59,9 @@ function TextEditor({ editor, activeSegmentText = "", onFileLoad }) {
       .trim();
 
     const highlightStyle =
-      props.element.type === 'paragraph' && textContent === flashText
-        ? { backgroundColor: '#89aac3', transition: 'background-color 4s ease' }
-        : { backgroundColor: 'transparent', transition: 'background-color 4s ease' };
+      props.element.type === 'paragraph' && textContent === flashText || props.element.type === 'heading-one' && textContent === flashText || props.element.type === 'heading-two' && textContent === flashText
+        ? { backgroundColor: '#89aac3', transition: 'background-color 2s ease' }
+        : { backgroundColor: 'transparent', transition: 'background-color 2s ease' };
 
     if (props.element.diff) {
       return (
@@ -213,8 +213,6 @@ function TextEditor({ editor, activeSegmentText = "", onFileLoad }) {
     <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('heading-one'); }}>Titel</button>
     <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('heading-two'); }}>Subtitel</button>
     <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('paragraph'); }}>Paragraph</button>
-    <button className="toolbarButton" onPointerDown={() => makeAWave()}>Make A Wave!</button>
-    <button className="toolbarButton" onPointerDown={() => stopAnimation()}>Stop Animation</button>
     <FileUploader onTextLoad={onFileLoad} />
   </div>
   <Editable className="editorEditable" style={{ flex: 1, minHeight: 0 }} onFileLoad={onFileLoad} onKeyDown={onKeyDown} onPaste={onPaste} renderLeaf={renderLeaf} renderElement={renderElement} placeholder="Begin your Story..."/>

@@ -10,8 +10,8 @@ export const AccteptBtn: React.FC<AccteptBtnProps> = ({ onClick }) => {
             type="button"
             onClick={onClick}
             style={{
-                marginTop: 32,
-                padding: '6px 12px',
+                marginTop: 0,
+                padding: '8px',
                 marginLeft: 32,
                 height: 40,
                 border: 'none',

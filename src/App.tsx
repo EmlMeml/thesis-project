@@ -167,7 +167,7 @@ function App() {
     <Box sx={{ width: '95%', padding: 2, display: 'flex', flexDirection: 'column', gap: 0 }}>
       <TopBar />
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
           <TextNav
             content={editorContent}
             onSegmentClick={handleSegmentClick}
@@ -177,7 +177,7 @@ function App() {
           <AccteptBtn onClick={handleAcceptChanges} />
         </Box>
 
-        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 0, alignItems: 'flex-start' }}>
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 0, alignItems: 'flex-start', paddingLeft: '24px' }}>
           
             <MyEditor
               fileText={fileText}
