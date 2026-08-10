@@ -7,8 +7,7 @@ import {
   FormatItalic,
   FormatUnderlined,
   ContentCopy,
-  ContentPaste,
-  BorderColor
+  ContentPaste
 } from "@mui/icons-material";
 import './../css/App.css';
 import './../css/wave-test.css';
@@ -59,7 +58,7 @@ function TextEditor({ editor, activeSegmentText = "", onFileLoad, onResolvedText
       .trim();
 
     const highlightStyle =
-      props.element.type === 'paragraph' && textContent === flashText || props.element.type === 'heading-one' && textContent === flashText || props.element.type === 'heading-two' && textContent === flashText
+      (props.element.type === 'paragraph' && textContent === flashText) || (props.element.type === 'heading-one' && textContent === flashText) || (props.element.type === 'heading-two' && textContent === flashText)
         ? { backgroundColor: '#89aac3', transition: 'background-color 2s ease' }
         : { backgroundColor: 'transparent', transition: 'background-color 2s ease' };
 

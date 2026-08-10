@@ -1,4 +1,4 @@
-del::after{
+/* del::after{
   content: "";
   position: absolute;
 
@@ -19,9 +19,24 @@ del::after{
   to {
     transform: scaleX(1);
   }
+} */
+
+del {
+  animation: fadeOut 2s ease-in 2s forwards;
 }
+
+@keyframes fadeOut{
+  from{ opacity: 1;}
+  to{ opacity: 0.6;}
+}
+
+
 .wave > span {
   display: inline-block;
   position: relative;
-  animation: waveAnimation 1.5s ease-in-out infinite;
+  animation: waveAnimation;
+  animation-duration: 1.5s;
+  animation-timing-function: ease-in-out;
+  animation-delay: 3s;
+  animation-iteration-count: 3;
 }
