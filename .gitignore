@@ -21,3 +21,12 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+build/asset-manifest.json
+build/asset-manifest.json
+build/index.html
+
+build/static/css/main.873caee4.css
+build/asset-manifest.json
+build/index.html
+build/static/css/main.873caee4.css
+.gitignore
