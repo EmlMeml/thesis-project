@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { createEditor, Descendant, Editor, Element as SlateElement, Transforms, Text } from "slate";
+import { createEditor, Editor, Element as SlateElement, Transforms, Text, Descendant } from "slate";
 import { ReactEditor, Slate, withReact } from "slate-react";
 import TextEditor from "./advancedEditor";
+import { CustomElement } from "../types/slate";
 
 // @ts-ignore: Allow side-effect CSS import without type declarations
 
@@ -15,30 +16,35 @@ interface MyEditorProps {
   isGenerating?: boolean;
 }
 
-const defaultValue = [
+
+const defaultValue: Descendant[] = [
   {
     type: 'heading-one',
+    paragraphKey: 'paragraphKey-0',
     children: [{ text: 'This is a heading' }],
   },
   {
     type: 'paragraph',
+    paragraphKey: 'paragraphKey-1',
     children: [{ text: 'This is a simple rich text editor built with Slate.js. You can start typing here...' }],
   },
-] as unknown as Descendant[];
+];
 
 export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, onFileLoad, activeSegmentText = "", changedParagraphDiffs = [], onResolvedParagraphTextChange, isGenerating = false }) => {
   const [editor] = useState(() => withReact(createEditor()));
   const [value, setValue] = useState<Descendant[]>(defaultValue);
-  const [resolvedTextByParagraph, setResolvedTextByParagraph] = useState<Record<string, string>>({});
+  const [resolvedTextByParagraph, setResolvedTextByParagraph] =
+  useState<Record<string, string>>({});
 
   const fileTextToSlateValue = (text: string): Descendant[] => {
     if (!text) {
       return [
         {
-          type: 'paragraph',
-          children: [{ text: '' }],
-        },
-      ] as Descendant[];
+        type: 'paragraph',
+        paragraphKey: 'paragraph-0',
+        children: [{ text: '' }],
+      },
+      ];
     }
     console.log("Converting file text to Slate value:", text);
     const trimmedText = text.trim();
@@ -46,8 +52,9 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
 
     if (paragraphMatches && paragraphMatches.length > 0) {
       return paragraphMatches
-        .map((match) => ({
+        .map((match, index) => ({
           type: 'paragraph',
+          paragraphKey: `paragraphKey-${index}`,
           children: [{ text: match.replace(/<p[^>]*>/gi, '').replace(/<\/p>/gi, '').trim() }],
         }))
         .filter((paragraph) => paragraph.children[0].text.length > 0) as Descendant[];
@@ -57,8 +64,9 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
       .split(/\r?\n/)
       .map((line) => line.trim())
       .filter((line) => line.length > 0)
-      .map((line) => ({
+      .map((line,index) => ({
         type: 'paragraph',
+        paragraphKey: `paragraphKey-${index}`,
         children: [{ text: line }],
       })) as Descendant[];
   };
@@ -68,29 +76,35 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
       return baseValue;
     }
 
-    const diffLookup = new Map(diffs.map((segment) => [segment.newText?.trim(), segment]));
+    const diffLookup = new Map(diffs.map((diff) => [diff.key, diff]));
 
-    return (baseValue as any[]).map((paragraph) => {
-      const paragraphText = (paragraph.children || [])
-        .map((child: any) => child.text || '')
-        .join('')
-        .trim();
+    return (baseValue as any[]).map((paragraph, index) => {
+      const paragraphKey = paragraph.paragraphKey ?? `paragraphKey-${index}`;
 
-      const matchingDiff = diffLookup.get(paragraphText);
-      if (matchingDiff) {
-        const resolvedText = resolvedTextByParagraph[matchingDiff.key] || matchingDiff.newText || paragraphText;
+      const matchingDiff = diffLookup.get(paragraphKey);
+      if(!matchingDiff){
         return {
           ...paragraph,
-          children: [{ text: resolvedText }],
-          diff: {
-            key: matchingDiff.key,
-            oldText: matchingDiff.oldText || '',
-            newText: matchingDiff.newText || '',
-          },
+          paragraphKey,
         };
       }
 
-      return paragraph;
+      const resolvedText = resolvedTextByParagraph[paragraphKey] ?? matchingDiff.newText;
+
+      return {
+        ...paragraph,
+        paragraphKey,
+        children:[
+          {
+            text: resolvedText,
+          },
+        ],
+        diff: {
+          key: matchingDiff.key,
+          oldText: matchingDiff.oldText || '',
+          newText: matchingDiff.newText || '',
+        },
+      };
     }) as Descendant[];
   };
 
@@ -106,13 +120,13 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
 
     if (JSON.stringify(currentValue) !== JSON.stringify(mergedValue)) {
       resetSelectionIfNeeded();
-      editor.children = mergedValue as Descendant[];
+      editor.children = mergedValue;
       editor.onChange();
       setValue(mergedValue);
       onContentChange?.(mergedValue);
       handleChange(mergedValue);
     }
-  }, [fileText, editor, onContentChange, changedParagraphDiffs, resolvedTextByParagraph]);
+  }, [fileText, editor, onContentChange, changedParagraphDiffs]);
 
   const handleChange = (newValue: Descendant[]) => {
     setValue(newValue);
@@ -131,11 +145,6 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
     if (!anchorPathValid || !focusPathValid) {
       Transforms.deselect(editor);
     }
-  };
-
-
-  const setResolvedParagraphText = (key: string, resolvedText: string) => {
-    setResolvedTextByParagraph((prev) => ({ ...prev, [key]: resolvedText }));
   };
 
   // Scroll to the active segment when it changes
@@ -219,7 +228,10 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
         activeSegmentText={activeSegmentText}
         onFileLoad={onFileLoad}
         onResolvedTextChange={(paragraphKey, resolvedText, pendingCount) => {
-          setResolvedTextByParagraph((prev) => ({ ...prev, [paragraphKey]: resolvedText }));
+          setResolvedTextByParagraph((prev) => ({
+            ...prev,
+            [paragraphKey]: resolvedText,
+          }));
           onResolvedParagraphTextChange?.(paragraphKey, resolvedText, pendingCount);
         }}
         isGenerating={isGenerating}

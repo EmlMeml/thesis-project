@@ -95,7 +95,6 @@ function App() {
       console.log("No reply text provided. Skipping saving previous version.");
       return;
     }
-
     //serialize both version to HTML to compare them
     const previousVersionHtml = serializeEditorContentToParagraphs(editorContent);
     const newVersionHtml = serializeEditorContentToParagraphs(replyText);
@@ -105,27 +104,11 @@ function App() {
     const previousParagraphs = extractParagraphsFromHtml(previousVersionHtml);
     const newParagraphs = extractParagraphsFromHtml(newVersionHtml);
     const paragraphCount = Math.max(previousParagraphs.length, newParagraphs.length);
-    const changedParagraphs = [];
-    const changedParagraphDetails = [];
-    const oldParagraphList = [];
+    const changedParagraphDiff = [];
 
     for (let i = 0; i < paragraphCount; i++) {
       const oldParagraph = previousParagraphs[i] || '';
       const newParagraph = newParagraphs[i] || '';
-
-      if (!oldParagraph && newParagraph) {
-        console.log(`Paragraph ${i} added:`, newParagraph);
-        changedParagraphs.push(newParagraph);
-        changedParagraphDetails.push({ text: newParagraph, changeNumber: calculateChangeNumber('', newParagraph) });
-        oldParagraphList.push('');
-        continue;
-      }
-
-      if (oldParagraph && !newParagraph) {
-        console.log(`Paragraph ${i} removed:`, oldParagraph);
-        oldParagraphList.push(oldParagraph);
-        continue;
-      }
 
       if (oldParagraph === newParagraph) {
         console.log(`Paragraph ${i} unchanged.`);
@@ -134,34 +117,29 @@ function App() {
 
       const changeNumber = calculateChangeNumber(oldParagraph, newParagraph);
 
-      if (newParagraph.includes(oldParagraph) || oldParagraph.includes(newParagraph)) {
-        console.log(`Paragraph ${i} modified in place.`);
-        console.log('Change number:', changeNumber);
-        changedParagraphs.push(newParagraph);
-        changedParagraphDetails.push({ text: newParagraph, changeNumber });
-        oldParagraphList.push(oldParagraph);
-      } else {
-        console.log(`Paragraph ${i} changed completely.`);
-        console.log('Change number:', changeNumber);
-        changedParagraphs.push(newParagraph);
-        changedParagraphDetails.push({ text: newParagraph, changeNumber });
-        oldParagraphList.push(oldParagraph);
-      }
+      changedParagraphDiff.push({
+        key: `paragraphKey-${i}`,
+        oldText: oldParagraph,
+        newText: newParagraph,
+      });
+
     }
 
-    if (changedParagraphDetails.length > 0) {
-      setChangedSegmentTexts(changedParagraphDetails);
-      setChangedParagraphDiffs(changedParagraphDetails.map((segment, index) => ({
-        key: `${index}-${segment.changeNumber}`,
-        oldText: oldParagraphList[index] || '',
-        newText: segment.text,
-      })));
-      setActiveSegmentText(changedParagraphDetails[0].text);
+    setChangedParagraphDiffs(changedParagraphDiff);
+
+    setChangedSegmentTexts(
+      changedParagraphDiff.map((diff) => ({
+        key: diff.key,
+        text: diff.newText,
+        changeNumber: calculateChangeNumber(diff.oldText, diff.newText),
+      }))
+    );
+     // set to first changed Paragraph
+    if (changedParagraphDiff.length > 0) {
+      setActiveSegmentText(changedParagraphDiff[0].newText);
     } else {
-      setChangedSegmentTexts([]);
-      setChangedParagraphDiffs([]);
+      setActiveSegmentText('');
     }
-
     setFileText(replyText);
   };
   console.log("isGenerating: ",isGenerating);
@@ -194,7 +172,7 @@ function App() {
             }}
             isGenerating={isGenerating}
           />
-          <ChangeCreator  editorText={editorText} onTextReplace={handleAiReply} onGeneratingChange={setIsGenerating} isGenerating={isGenerating}/>
+          <ChangeCreator editorText={editorText} onTextReplace={handleAiReply} onGeneratingChange={setIsGenerating} isGenerating={isGenerating}/>
         </Box>
       </Box>
     </Box>

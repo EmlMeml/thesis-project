@@ -16,7 +16,7 @@ interface TextDiffProps {
 type ChangeStatus = 'pending' | 'accepted' | 'rejected';
 
 type DiffGroup = {
-  id: number;
+  id: string;
   removed?: ChangeObject<string>;
   added?: ChangeObject<string>;
   original?: string;
@@ -28,52 +28,55 @@ type ParagraphDiff = {
 };
 
 export const InlineTextDiff: React.FC<TextDiffProps> = ({ oldText, newText, paragraphKey, onResolvedTextChange }) => {
-  const differences = diffWords(oldText, newText);
-  const [statuses, setStatuses] = useState<Record<number, ChangeStatus>>({});
-  const [activeParagraphId, setActiveParagraphId] = useState<number>(0);
+  const differences =  useMemo(() => diffWords(oldText, newText),[oldText, newText]);
+  const [statuses, setStatuses] = useState<Record<string, ChangeStatus>>({});
 
-  const createParagraphGroups = (parts: ChangeObject<string>[], startGroupId: number): { groups: DiffGroup[]; nextGroupId: number } => {
-    const groups: DiffGroup[] = [];
-    let groupId = startGroupId;
+  const createParagraphGroups = (parts: ChangeObject<string>[], paragraphId: number): DiffGroup[] => {
 
-    for (let index = 0; index < parts.length; index += 1) {
-      const part = parts[index];
-      const nextPart = parts[index + 1];
+const groups: DiffGroup[] = [];
 
-      if (part.removed && nextPart?.added) {
-        groups.push({ id: groupId++, removed: part, added: nextPart });
-        index += 1;
-        continue;
-      }
+for (let index = 0; index < parts.length; index += 1) {
+  const part = parts[index];
+  const nextPart = parts[index + 1];
 
-      if (part.removed || part.added) {
-        groups.push({
-          id: groupId++,
-          removed: part.removed ? part : undefined,
-          added: part.added ? part : undefined,
-        });
-        continue;
-      }
+  const groupId = `${paragraphId}-${index}`;
 
-      groups.push({ id: groupId++, original: part.value });
-    }
+  if (part.removed && nextPart?.added) {
+    groups.push({ id: groupId, removed: part, added: nextPart });
+    index += 1;
+    continue;
+  }
 
-    return { groups, nextGroupId: groupId };
-  };
+  if (part.removed || part.added) {
+    groups.push({
+      id: groupId,
+      removed: part.removed ? part : undefined,
+      added: part.added ? part : undefined,
+    });
+    continue;
+  }
+
+  groups.push({ id: groupId, original: part.value });
+}
+
+return groups;
+};
 
   const paragraphDiffs = useMemo<ParagraphDiff[]>(() => {
     const paragraphs: ParagraphDiff[] = [];
     let currentParts: ChangeObject<string>[] = [];
     let paragraphId = 0;
-    let nextGroupId = 0;
 
     differences.forEach((part) => {
       const segments = part.value.split(/(\n)/);
+      
       segments.forEach((segment) => {
         if (segment === '\n') {
-          const result = createParagraphGroups(currentParts, nextGroupId);
-          paragraphs.push({ id: paragraphId++, groups: result.groups });
-          nextGroupId = result.nextGroupId;
+          paragraphs.push({ id: paragraphId, groups: createParagraphGroups(
+            currentParts,paragraphId
+          ), 
+        });
+          paragraphId +=1;
           currentParts = [];
         } else if (segment.length > 0) {
           currentParts.push({ ...part, value: segment } as ChangeObject<string>);
@@ -82,13 +85,73 @@ export const InlineTextDiff: React.FC<TextDiffProps> = ({ oldText, newText, para
     });
 
     if (currentParts.length > 0) {
-      const result = createParagraphGroups(currentParts, nextGroupId);
-      paragraphs.push({ id: paragraphId++, groups: result.groups });
-      nextGroupId = result.nextGroupId;
-    }
+      paragraphs.push({ id: paragraphId, groups: createParagraphGroups(
+        currentParts,
+        paragraphId,
+      ),
+    });
+  }
 
     return paragraphs;
   }, [differences]);
+
+  const [activeParagraphId, setActiveParagraphId] = useState<number>(0);
+  const selectedParagraph = paragraphDiffs[activeParagraphId] ?? paragraphDiffs[0];
+
+  const pendingGroupCount = selectedParagraph
+    ? selectedParagraph.groups.filter((group) => {
+        const status = statuses[group.id] ?? 'pending';
+        return (group.removed || group.added) && status === 'pending';
+      }).length
+    : 0;
+  
+  //Puting together Resolved Text
+  const buildResolvedText = (
+    paragraph: ParagraphDiff,
+    statusSnapshot: Record<string, ChangeStatus>
+  ) => {
+    return paragraph.groups.map((group) => {
+      const status = statusSnapshot[group.id] ?? 'pending';
+
+      //unverändert
+      if(group.original !== undefined){
+        return group.original;
+      }
+
+      //change old to new
+      if(group.removed && group.added){
+        return status === 'rejected' 
+          ? group.removed.value
+          : group.added.value;
+      }
+
+      //new added Text
+      if(group.added){
+        return status === 'rejected'
+          ? ''
+          : group.added.value;
+      }
+
+      //Deleted Text
+      if(group.removed){
+        return status === 'rejected'
+          ? group.removed.value
+          : '';
+      }
+
+      return '';
+    }).join('');
+  };
+
+  const resolvedText = useMemo(() => {
+      if (!selectedParagraph) {
+        return '';
+      }
+      return buildResolvedText(
+        selectedParagraph,
+        statuses,
+      );
+    }, [selectedParagraph, statuses]);
 
   const paragraphRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
@@ -99,7 +162,7 @@ export const InlineTextDiff: React.FC<TextDiffProps> = ({ oldText, newText, para
     }
   }, [activeParagraphId]);
 
-  const resolveTextForParagraph = (paragraph: ParagraphDiff, statusesSnapshot: Record<number, ChangeStatus>) =>
+  const resolveTextForParagraph = (paragraph: ParagraphDiff, statusesSnapshot: Record<string, ChangeStatus>) =>
     paragraph.groups
       .map((group) => {
         const status = statusesSnapshot[group.id] ?? 'pending';
@@ -124,7 +187,7 @@ export const InlineTextDiff: React.FC<TextDiffProps> = ({ oldText, newText, para
       })
       .join('');
 
-  const countPendingCharacters = (paragraph: ParagraphDiff, statusesSnapshot: Record<number, ChangeStatus>) =>
+  const countPendingCharacters = (paragraph: ParagraphDiff, statusesSnapshot: Record<string, ChangeStatus>) =>
     paragraph.groups.reduce((count, group) => {
       const status = statusesSnapshot[group.id] ?? 'pending';
       if (status !== 'pending') {
@@ -152,8 +215,36 @@ export const InlineTextDiff: React.FC<TextDiffProps> = ({ oldText, newText, para
         {char}
       </span>
     ));
+  
+  const handleAccept2 = (groupId: string) => {
+    setStatuses((prev) => {
+      const next = {
+        ...prev,
+        [groupId]: 'accepted' as ChangeStatus,
+      };
 
-  const handleAccept = (groupId: number) => {
+      const paragraph = paragraphDiffs.find((p) => 
+        p.groups.some((g) => g.id === groupId),
+      );
+
+      if(!paragraph){
+        return next;
+      }
+
+      const text = buildResolvedText(paragraph,next);
+
+      onResolvedTextChange?.(
+        paragraphKey!,
+        text,
+        countPendingCharacters(paragraph,next),
+      );
+
+      return next;
+      
+    });
+  };
+
+/*   const handleAccept = (groupId: number) => {
     setStatuses((prev) => {
       const nextStatuses: Record<number, ChangeStatus> = { ...prev, [groupId]: 'accepted' };
       const paragraph = paragraphDiffs.find((paragraphItem) =>
@@ -168,9 +259,35 @@ export const InlineTextDiff: React.FC<TextDiffProps> = ({ oldText, newText, para
       }
       return nextStatuses;
     });
+  }; */
+
+  const handleReject2 = (groupId:string) => {
+    setStatuses((prev) => {
+      const next = {
+        ...prev,
+        [groupId]: 'rejected' as ChangeStatus,
+      };
+    const paragraph = paragraphDiffs.find((p) =>
+      p.groups.some((g) => g.id === groupId),
+    );
+    
+    if(!paragraph){
+      return next;
+    }
+
+    const text = buildResolvedText(paragraph, next);
+    onResolvedTextChange?.(
+      paragraphKey!,
+      text,
+      countPendingCharacters(paragraph,next),
+    );
+    return next;
+    
+    });
   };
 
-  const handleReject = (groupId: number) => {
+
+/*   const handleReject = (groupId: number) => {
     setStatuses((prev) => {
       const nextStatuses: Record<number, ChangeStatus> = { ...prev, [groupId]: 'rejected' };
       const paragraph = paragraphDiffs.find((paragraphItem) =>
@@ -186,8 +303,8 @@ export const InlineTextDiff: React.FC<TextDiffProps> = ({ oldText, newText, para
       return nextStatuses;
     });
   };
-
-  const findNextPendingParagraph = (startIndex: number, statusesSnapshot: Record<number, ChangeStatus>) => {
+ */
+  const findNextPendingParagraph = (startIndex: number, statusesSnapshot: Record<string, ChangeStatus>) => {
     const hasPendingChanges = (paragraph: ParagraphDiff) =>
       paragraph.groups.some((group) => {
         const status = statusesSnapshot[group.id] ?? 'pending';
@@ -211,7 +328,7 @@ export const InlineTextDiff: React.FC<TextDiffProps> = ({ oldText, newText, para
 
   const handleAcceptParagraph = (paragraph: ParagraphDiff | undefined) => {
     if (!paragraph) return;
-    const acceptedGroups = paragraph.groups.reduce<Record<number, ChangeStatus>>((acc, group) => {
+    const acceptedGroups = paragraph.groups.reduce<Record<string, ChangeStatus>>((acc, group) => {
       if (group.removed || group.added) {
         acc[group.id] = 'accepted';
       }
@@ -219,7 +336,7 @@ export const InlineTextDiff: React.FC<TextDiffProps> = ({ oldText, newText, para
     }, {});
 
     setStatuses((prev) => {
-      const nextStatuses: Record<number, ChangeStatus> = { ...prev, ...acceptedGroups };
+      const nextStatuses: Record<string, ChangeStatus> = { ...prev, ...acceptedGroups };
       if (paragraphKey && onResolvedTextChange) {
         onResolvedTextChange(
           paragraphKey,
@@ -238,7 +355,7 @@ export const InlineTextDiff: React.FC<TextDiffProps> = ({ oldText, newText, para
   const handleRejectParagraph = (paragraph: ParagraphDiff | undefined) => {
     if (!paragraph) return;
   
-  const rejectedGroups = paragraph.groups.reduce<Record<number, ChangeStatus>>((acc, group) => {
+  const rejectedGroups = paragraph.groups.reduce<Record<string, ChangeStatus>>((acc, group) => {
       if (group.removed || group.added) {
         acc[group.id] = 'rejected';
       }
@@ -246,7 +363,7 @@ export const InlineTextDiff: React.FC<TextDiffProps> = ({ oldText, newText, para
     }, {});
 
     setStatuses((prev) => { 
-      const nextStatuses: Record<number, ChangeStatus> = { ...prev, ...rejectedGroups };
+      const nextStatuses: Record<string, ChangeStatus> = { ...prev, ...rejectedGroups };
       if (paragraphKey && onResolvedTextChange) {
         onResolvedTextChange(
           paragraphKey,
@@ -262,13 +379,7 @@ export const InlineTextDiff: React.FC<TextDiffProps> = ({ oldText, newText, para
     });
   };
 
-  const selectedParagraph = paragraphDiffs[activeParagraphId] ?? paragraphDiffs[0];
-  const pendingGroupCount = selectedParagraph
-    ? selectedParagraph.groups.filter((group) => {
-        const status = statuses[group.id] ?? 'pending';
-        return (group.removed || group.added) && status === 'pending';
-      }).length
-    : 0;
+
 
   const paragraphHasPendingChanges = (paragraph: ParagraphDiff) =>
     paragraph.groups.some((group) => {
@@ -392,7 +503,7 @@ export const InlineTextDiff: React.FC<TextDiffProps> = ({ oldText, newText, para
                               size="small"
                               variant="outlined"
                               color="success"
-                              onClick={() => handleAccept(group.id)}
+                              onClick={() => handleAccept2(group.id)}
                               icon={<CheckIcon />}
                               style={{ minWidth: '56px', padding: '0 6px' }}
                             />
@@ -401,7 +512,7 @@ export const InlineTextDiff: React.FC<TextDiffProps> = ({ oldText, newText, para
                               size="small"
                               variant="outlined"
                               color="error"
-                              onClick={() => handleReject(group.id)}
+                              onClick={() => handleReject2(group.id)}
                               icon={<CloseIcon />}
                               style={{ minWidth: '56px', padding: '0 6px' }}
                             />
