@@ -12,7 +12,7 @@ import {
 } from "@mui/icons-material";
 import './../css/App.css';
 import './../css/wave-test.css';
-import { makeAWave, stopAnimation } from "../animation.js";
+import './../css/loadingAnimation.css';
 import FileUploader from "./../custom/FileUploader.tsx";
 import { InlineTextDiff } from "./TextDiff.tsx";
 
@@ -31,7 +31,7 @@ const Leaf = (props) => {
   );
 };
 
-function TextEditor({ editor, activeSegmentText = "", onFileLoad }) {
+function TextEditor({ editor, activeSegmentText = "", onFileLoad, onResolvedTextChange, isGenerating }) {
   const [flashText, setFlashText] = useState("");
   useEffect(() => {
     if (!activeSegmentText) return;
@@ -65,8 +65,15 @@ function TextEditor({ editor, activeSegmentText = "", onFileLoad }) {
 
     if (props.element.diff) {
       return (
-        <div {...props.attributes} style={{ ...highlightStyle, marginBottom: 8, padding: 8, borderRadius: 6, backgroundColor: 'transparent' }}>
-          <InlineTextDiff oldText={props.element.diff.oldText} newText={props.element.diff.newText} />
+        <div {...props.attributes} style={{ ...highlightStyle, borderRadius: 6, backgroundColor: 'transparent' }}>
+          <div contentEditable={false} style={{ marginBottom: 8 }}>
+            <InlineTextDiff
+              oldText={props.element.diff.oldText}
+              newText={props.element.diff.newText}
+              paragraphKey={props.element.diff.key}
+              onResolvedTextChange={onResolvedTextChange}
+            />
+          </div>
         </div>
       );
     }
@@ -215,8 +222,18 @@ function TextEditor({ editor, activeSegmentText = "", onFileLoad }) {
     <button className="toolbarButton" onPointerDown={(event) => { event.preventDefault(); toggleBlock('paragraph'); }}>Paragraph</button>
     <FileUploader onTextLoad={onFileLoad} />
   </div>
-  <Editable className="editorEditable" style={{ flex: 1, minHeight: 0 }} onFileLoad={onFileLoad} onKeyDown={onKeyDown} onPaste={onPaste} renderLeaf={renderLeaf} renderElement={renderElement} placeholder="Begin your Story..."/>
-</div>;
+  <div className="editor-wrapper" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+    <div className={isGenerating ? "editor generating" : "editor"} style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <Editable className="editorEditable" style={{ flex: 1, minHeight: 0, overflowY: 'auto' }} onFileLoad={onFileLoad} onKeyDown={onKeyDown} onPaste={onPaste} renderLeaf={renderLeaf} renderElement={renderElement} placeholder="Begin your Story..."/>
+    </div>
+     {isGenerating && ( 
+      <>
+      <div className="backdrop"></div>
+      <div className="loader"/>
+      </>
+    )} 
+  </div>
+  </div>;
 }
 
 export default TextEditor;

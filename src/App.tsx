@@ -64,12 +64,14 @@ function calculateChangeNumber(oldText = '', newText = '') {
 }
 
 function App() {
+
   const [editorContent, setEditorContent] = useState([]);
   const [fileText, setFileText] = useState('');
   const [activeSegmentText, setActiveSegmentText] = useState('');
   const [previousVersions, setPreviousVersions] = useState([]);
   const [changedSegmentTexts, setChangedSegmentTexts] = useState([]);
   const [changedParagraphDiffs, setChangedParagraphDiffs] = useState([]);
+  const [isGenerating, setIsGenerating] = useState(false);
   const editorText = editorContent
     .map((node) => (node.children ? node.children.map((child) => child.text).join('') : ''))
     .join('\n');
@@ -162,7 +164,7 @@ function App() {
 
     setFileText(replyText);
   };
-
+  console.log("isGenerating: ",isGenerating);
   return (
     <Box sx={{ width: '95%', padding: 2, display: 'flex', flexDirection: 'column', gap: 0 }}>
       <TopBar />
@@ -176,19 +178,23 @@ function App() {
           />
           <AccteptBtn onClick={handleAcceptChanges} />
         </Box>
-
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 0, alignItems: 'flex-start', paddingLeft: '24px' }}>
-          
-            <MyEditor
-              fileText={fileText}
-              onContentChange={setEditorContent}
-              onFileLoad={handleFileLoad}
-              activeSegmentText={activeSegmentText}
-              changedParagraphDiffs={changedParagraphDiffs}
-            />
-          
-            <ChangeCreator editorText={editorText} onTextReplace={handleAiReply} />
-          
+          <MyEditor
+            fileText={fileText}
+            onContentChange={setEditorContent}
+            onFileLoad={handleFileLoad}
+            activeSegmentText={activeSegmentText}
+            changedParagraphDiffs={changedParagraphDiffs}
+            onResolvedParagraphTextChange={(paragraphKey, resolvedText, pendingCount) => {
+              setChangedSegmentTexts((prev) => prev.map((segment) =>
+                segment.key === paragraphKey
+                  ? { ...segment, text: resolvedText, changeNumber: pendingCount }
+                  : segment
+              ));
+            }}
+            isGenerating={isGenerating}
+          />
+          <ChangeCreator  editorText={editorText} onTextReplace={handleAiReply} onGeneratingChange={setIsGenerating} isGenerating={isGenerating}/>
         </Box>
       </Box>
     </Box>

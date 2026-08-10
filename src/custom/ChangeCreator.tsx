@@ -30,7 +30,7 @@ export function generatePrompt(description: string, scopeIndex: number, intensit
     return prompt;
 }
 
-export const ChangeCreator = ({ editorText = '', onTextReplace }: { editorText?: string; onTextReplace?: (text: string) => void }) => {
+export const ChangeCreator = ({ editorText = '', onTextReplace, onGeneratingChange, isGenerating = false }: { editorText?: string; onTextReplace?: (text: string) => void; onGeneratingChange?: (generating:boolean) => void; isGenerating?:boolean}) => {
     const [intensityIndex, setIntensityIndex] = useState(2); // Default to "Cobblestone"
     const [scopeIndex, setScopeIndex] = useState(1); // Default to "Pond"
     const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
@@ -46,37 +46,49 @@ export const ChangeCreator = ({ editorText = '', onTextReplace }: { editorText?:
             return
         }
 
+        onGeneratingChange?.(true);
         const prompt = generatePrompt(descriptionRef.current.value, scopeIndex, intensityIndex, editorText);
         setMessage(prompt);
-        if(!prompt.trim()) return;
+        if(!prompt.trim()) {
+            onGeneratingChange?.(false);
+            return;
+        }
 
         const userMessage = { sender: 'You', text: prompt };
         //setChatLog((prev) => [...prev, userMessage]);
         setMessage("");
 
-        const res = await fetch('https://server-production-4846.up.railway.app/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: prompt })
-        });
+        try {
+            const res = await fetch('https://server-production-4846.up.railway.app/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: prompt })
+            });
 
-        const messageData = await res.json();
+            const messageData = await res.json();
+            let replyText = '';
+            if(!messageData?.reply){
+                window.alert('No Reply Text Found! Please Try again.');
+                replyText = editorText;
+            } else {
+                replyText = messageData.reply;
+            }
 
-        //console.log("MessageData - Reply: ",messageData.reply);
-        let replyText = '';
-        if(!messageData?.reply){
-            window.alert('No Reply Text Found! Please Try again.');
-            replyText = editorText; // Fallback to original text if no reply is found
-        }else{
-            replyText = messageData.reply;       
+            if (replyText && onTextReplace) {
+                onTextReplace(replyText);
+            }
+        } catch (error) {
+            console.error('AI request failed', error);
+            window.alert('Failed to get a response from the AI. Please try again.');
+        } finally {
+            onGeneratingChange?.(false);
         }
-        if (replyText && onTextReplace) {
-            onTextReplace(replyText);
-        }
-  
+
+        return;
+
     };
 
-
+    console.log("onGeneratingChange:", onGeneratingChange);
   return (
     <div
       id="change-creator"
@@ -142,7 +154,7 @@ export const ChangeCreator = ({ editorText = '', onTextReplace }: { editorText?:
             </span>
             </div>
             <br />
-              <input type="submit" value="Throw Stone" id="change-submit" onClick={() => sendMessage()} />
+              <input type="submit" value={isGenerating ? "Generating..." : "Throw Stone"} disabled={isGenerating} id="change-submit" onClick={() => sendMessage()} />
        </div>
        
     </div>

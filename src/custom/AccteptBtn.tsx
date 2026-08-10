@@ -22,7 +22,7 @@ export const AccteptBtn: React.FC<AccteptBtnProps> = ({ onClick }) => {
                 width: 160,
             }}
         >
-            Accept Changes
+            Finish Changes
         </button>
     );
 };

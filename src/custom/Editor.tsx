@@ -11,6 +11,8 @@ interface MyEditorProps {
   onFileLoad?: (value: Descendant[]) => void;
   activeSegmentText?: string;
   changedParagraphDiffs?: Array<{ key: string; oldText: string; newText: string }>;
+  onResolvedParagraphTextChange?: (paragraphKey: string, resolvedText: string, pendingCount: number) => void;
+  isGenerating?: boolean;
 }
 
 const defaultValue = [
@@ -24,10 +26,10 @@ const defaultValue = [
   },
 ] as unknown as Descendant[];
 
-export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, onFileLoad, activeSegmentText = "", changedParagraphDiffs = [] }) => {
+export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, onFileLoad, activeSegmentText = "", changedParagraphDiffs = [], onResolvedParagraphTextChange, isGenerating = false }) => {
   const [editor] = useState(() => withReact(createEditor()));
   const [value, setValue] = useState<Descendant[]>(defaultValue);
-  const [editorKey, setEditorKey] = useState(0);
+  const [resolvedTextByParagraph, setResolvedTextByParagraph] = useState<Record<string, string>>({});
 
   const fileTextToSlateValue = (text: string): Descendant[] => {
     if (!text) {
@@ -76,9 +78,12 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
 
       const matchingDiff = diffLookup.get(paragraphText);
       if (matchingDiff) {
+        const resolvedText = resolvedTextByParagraph[matchingDiff.key] || matchingDiff.newText || paragraphText;
         return {
           ...paragraph,
+          children: [{ text: resolvedText }],
           diff: {
+            key: matchingDiff.key,
             oldText: matchingDiff.oldText || '',
             newText: matchingDiff.newText || '',
           },
@@ -104,11 +109,10 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
       editor.children = mergedValue as Descendant[];
       editor.onChange();
       setValue(mergedValue);
-      setEditorKey((prev) => prev + 1);
       onContentChange?.(mergedValue);
       handleChange(mergedValue);
     }
-  }, [fileText, editor, onContentChange, changedParagraphDiffs]);
+  }, [fileText, editor, onContentChange, changedParagraphDiffs, resolvedTextByParagraph]);
 
   const handleChange = (newValue: Descendant[]) => {
     setValue(newValue);
@@ -129,6 +133,10 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
     }
   };
 
+
+  const setResolvedParagraphText = (key: string, resolvedText: string) => {
+    setResolvedTextByParagraph((prev) => ({ ...prev, [key]: resolvedText }));
+  };
 
   // Scroll to the active segment when it changes
   useEffect(() => {
@@ -202,12 +210,20 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
 
   return (
     <Slate
-      key={editorKey}
       editor={editor}
       initialValue={value}
       onChange={handleChange}
     >
-      <TextEditor editor={editor} activeSegmentText={activeSegmentText} onFileLoad={onFileLoad} />
+      <TextEditor
+        editor={editor}
+        activeSegmentText={activeSegmentText}
+        onFileLoad={onFileLoad}
+        onResolvedTextChange={(paragraphKey, resolvedText, pendingCount) => {
+          setResolvedTextByParagraph((prev) => ({ ...prev, [paragraphKey]: resolvedText }));
+          onResolvedParagraphTextChange?.(paragraphKey, resolvedText, pendingCount);
+        }}
+        isGenerating={isGenerating}
+      />
     </Slate>
   );
 };
