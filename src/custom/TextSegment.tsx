@@ -3,18 +3,20 @@ import './../css/textSegmentAnimation.css';
 
 interface TextSegmentProps {
     text?: string;
+    paragraphKey?: string;
     minWidth?: number;
     maxWidth?: number;
     height?: number;
     isChanged?: boolean;
     changeNumber?: number;
-    onClick?: (text: string) => void;
+    onClick?: (paragraphKey: string) => void;
 }
 
 
 
 export const TextSegment: React.FC<TextSegmentProps> = ({
     text = "",
+    paragraphKey="",
     minWidth = 24,
     maxWidth = 1000000,
     height = 64,
@@ -22,12 +24,14 @@ export const TextSegment: React.FC<TextSegmentProps> = ({
     changeNumber,
     onClick,
 }) => {
+
     const visibleText = text.trim() || "...";
     const charCount = visibleText.replace(/\s+/g, "").length;
     const isCurrentlyChanged = Boolean(isChanged);
-    const normalizedValue = changeNumber !== undefined ? Math.min(10000, Math.max(1, changeNumber)) : 10;
-    const animationDuration = Math.max(0.8, 3.2 - (normalizedValue / 10000) * 2.4);
-    //console.log('animationDuration:', animationDuration, 'changeNumber:', changeNumber);
+    const normalizedValue = changeNumber !== undefined ? Math.min(10000, Math.max(0, changeNumber)) : 10;
+    const progress = normalizedValue / 100;
+    const animationDuration = 0.8 +  Math.pow(1 - progress, 2) * 2.4;
+    console.log('animationDuration:', animationDuration, 'changeNumber:', changeNumber);
     const width = Math.max(minWidth, Math.min(maxWidth, charCount * 8));
     const layerStyle = (delay: string) => ({
         ['--ripple-delay' as any]: delay,
@@ -46,7 +50,10 @@ export const TextSegment: React.FC<TextSegmentProps> = ({
             id="text-segment"
             className={`text-segment${isCurrentlyChanged ? " changed" : ""}`}
             onClick={(event) => {
-                onClick?.(visibleText);
+                if(paragraphKey){
+                    onClick?.(paragraphKey);
+                }
+                
                 event.currentTarget.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
             }}
             role="button"
@@ -54,7 +61,9 @@ export const TextSegment: React.FC<TextSegmentProps> = ({
             onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    onClick?.(visibleText);
+                    if(paragraphKey){
+                    onClick?.(paragraphKey);
+                    }
                 }
             }}
             style={{

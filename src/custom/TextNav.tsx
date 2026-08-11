@@ -3,6 +3,7 @@ import { Descendant } from 'slate';
 import { TextSegment } from './TextSegment';
 
 interface ChangedSegment {
+    paragraphKey?:string;
     text: string;
     changeNumber?: number;
 }
@@ -10,31 +11,35 @@ interface ChangedSegment {
 interface TextNavProps {
     content?: Descendant[];
     onSegmentClick?: (text: string) => void;
-    changedTexts?: string[];
     changedSegments?: ChangedSegment[];
 }
 
-export const TextNav: React.FC<TextNavProps> = ({ content = [], onSegmentClick, changedTexts = [], changedSegments = [] }) => {
-    const segments = content.flatMap((node: any) => {
+export const TextNav: React.FC<TextNavProps> = ({ content = [], onSegmentClick, changedSegments = [] }) => {
+    const segments = content.flatMap((node: any, index) => {
         if (!node || !Array.isArray(node.children)) {
             return [];
         }
 
-        return node.children
-            .filter((child: any) => typeof child?.text === 'string' && child.text.trim().length > 0)
-            .map((child: any) => child.text);
+        const text = node.children.filter(
+            (child:any) => 
+                typeof child?.text === 'string' && child.text.trim().length > 0
+            ).map((child:any) => child.text).join('');
+            if(!text.trim()){
+                return [];
+            }
+    
+        return [{
+            text,
+            paragraphKey: node.paragraphKey ?? `paragraphKey-${index}`,
+        }];
     });
-
-    const normalizedChangedTexts = (changedTexts || [])
-        .map((text) => text?.trim())
-        .filter((text): text is string => Boolean(text));
-
     const normalizedChangedSegments = (changedSegments || [])
         .map((segment) => ({
+            paragraphKey: segment?.paragraphKey || '',
             text: segment?.text?.trim() || '',
             changeNumber: typeof segment?.changeNumber === 'number' ? segment.changeNumber : 0,
         }))
-        .filter((segment): segment is ChangedSegment & { text: string; changeNumber: number } => Boolean(segment.text));
+        .filter((segment)=> Boolean(segment.text) && Boolean(segment.paragraphKey));
 
     return (
         <div
@@ -57,16 +62,17 @@ export const TextNav: React.FC<TextNavProps> = ({ content = [], onSegmentClick, 
             }}
         >
             {segments.length > 0 ? (
-                segments.map((text, index) => {
-                    const textLength = text.trim().length;
-                    const changedSegment = normalizedChangedSegments.find((segment) => segment.text === text.trim());
-                    const isSegmentChanged = normalizedChangedTexts.includes(text.trim()) || Boolean(changedSegment);
+                segments.map((segment) => {
+                    const textLength = segment.text.trim().length;
+                    const changedSegment = normalizedChangedSegments.find((changed) => changed.paragraphKey === segment.paragraphKey);
+                    const isSegmentChanged = Boolean(changedSegment);
                     const changeNumber = changedSegment?.changeNumber ?? 0;
                     const segmentWidth = Math.max(16, Math.min(160, 16 + textLength * 0.5));
                     return (
                         <TextSegment
-                            key={`${text}-${index}`}
-                            text={text}
+                            key={segment.paragraphKey}
+                            text={segment.text}
+                            paragraphKey={segment.paragraphKey}
                             onClick={onSegmentClick}
                             isChanged={isSegmentChanged}
                             changeNumber={changeNumber}

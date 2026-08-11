@@ -10,7 +10,7 @@ interface MyEditorProps {
   fileText?: string;
   onContentChange?: (value: Descendant[]) => void;
   onFileLoad?: (value: Descendant[]) => void;
-  activeSegmentText?: string;
+  activeSegmentKey?: string;
   changedParagraphDiffs?: Array<{ key: string; oldText: string; newText: string }>;
   onResolvedParagraphTextChange?: (paragraphKey: string, resolvedText: string, pendingCount: number) => void;
   isGenerating?: boolean;
@@ -30,7 +30,7 @@ const defaultValue: Descendant[] = [
   },
 ];
 
-export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, onFileLoad, activeSegmentText = "", changedParagraphDiffs = [], onResolvedParagraphTextChange, isGenerating = false }) => {
+export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, onFileLoad, activeSegmentKey = "", changedParagraphDiffs = [], onResolvedParagraphTextChange, isGenerating = false }) => {
   const [editor] = useState(() => withReact(createEditor()));
   const [value, setValue] = useState<Descendant[]>(defaultValue);
   const [resolvedTextByParagraph, setResolvedTextByParagraph] =
@@ -89,14 +89,14 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
         };
       }
 
-      const resolvedText = resolvedTextByParagraph[paragraphKey] ?? matchingDiff.newText;
+      const resolvedText = resolvedTextByParagraph[paragraphKey];
 
       return {
         ...paragraph,
         paragraphKey,
         children:[
           {
-            text: resolvedText,
+            text: resolvedText ?? matchingDiff.oldText,
           },
         ],
         diff: {
@@ -149,15 +149,13 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
 
   // Scroll to the active segment when it changes
   useEffect(() => {
-    //console.log("## Active segment text changed:", activeSegmentText);
     
-    if (!activeSegmentText) {
+    if (!activeSegmentKey) {
       return;
     }
 
-    const targetText = activeSegmentText.trim();
-    //console.log("## Searching for target text in editor:", targetText);
-    if (!targetText) {
+    const targetKey = activeSegmentKey;
+    if (!targetKey) {
       return;
     }
 
@@ -168,16 +166,10 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
       if(SlateElement.isElement(node) && Editor.isBlock(editor, node)) {
         
         try {
-          const fullText = (node as any).children
-            .map((c: any) => (typeof c.text === 'string' ? c.text : ''))
-            .join('')
-            .trim();
-          
-          if (!fullText){
-            continue;
-          }
+          const paragraphKey = (node as any).paragraphKey;
+            
           //console.log("## Checking node for match:", fullText);
-          if (fullText === targetText || fullText.includes(targetText)) {
+          if (paragraphKey === targetKey) {
             // find first child index that contains text to build a text-node path
             const childIndex = (node as any).children.findIndex((c: any) => typeof c.text === 'string' && c.text.trim().length > 0);
             foundPath = childIndex >= 0 ? path.concat(childIndex) : path.concat(0);
@@ -195,7 +187,7 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
       return;
     }
 
-    ReactEditor.focus(editor);
+    //ReactEditor.focus(editor);
 
     requestAnimationFrame(() => {
       const blockEntry = Editor.above(editor, {
@@ -203,19 +195,13 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
         match: (n) => SlateElement.isElement(n) && Editor.isBlock(editor, n),
       });
 
-      let domNode = null;
-      if (blockEntry) {
-        domNode = ReactEditor.toDOMNode(editor, blockEntry[0]);
-      } else {
-        const [nodeToScroll] = Editor.node(editor, foundPath);
-        domNode = ReactEditor.toDOMNode(editor, nodeToScroll);
-      }
-
-      if (domNode instanceof HTMLElement) {
-        domNode.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+      if (!blockEntry) { return; } 
+      const domNode = ReactEditor.toDOMNode( editor, blockEntry[0] ); 
+      if (domNode instanceof HTMLElement) { 
+        domNode.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest', });
       }
     });
-  }, [activeSegmentText, editor]);
+  }, [activeSegmentKey, editor, value]);
 
   return (
     <Slate
@@ -225,7 +211,7 @@ export const MyEditor: React.FC<MyEditorProps> = ({ fileText, onContentChange, o
     >
       <TextEditor
         editor={editor}
-        activeSegmentText={activeSegmentText}
+        activeSegmentText={activeSegmentKey}
         onFileLoad={onFileLoad}
         onResolvedTextChange={(paragraphKey, resolvedText, pendingCount) => {
           setResolvedTextByParagraph((prev) => ({

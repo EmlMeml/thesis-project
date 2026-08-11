@@ -17,7 +17,7 @@
 .wave > span {
   display: inline-block;
   position: relative;
-  animation: waveAnimation 2s ease-in-out infinite;
+  animation: waveAnimation 1.2s ease-in-out 4s 4;
 }
 
 .wave > span:nth-child(1) {

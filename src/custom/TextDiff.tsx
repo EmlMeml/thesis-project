@@ -105,49 +105,37 @@ return groups;
       }).length
     : 0;
   
-  //Puting together Resolved Text
-  const buildResolvedText = (
-    paragraph: ParagraphDiff,
-    statusSnapshot: Record<string, ChangeStatus>
-  ) => {
-    return paragraph.groups.map((group) => {
-      const status = statusSnapshot[group.id] ?? 'pending';
 
-      //unverändert
-      if(group.original !== undefined){
+  const resolveTextForParagraph = (paragraph: ParagraphDiff, statusesSnapshot: Record<string, ChangeStatus>) =>
+  paragraph.groups
+    .map((group) => {
+      const status = statusesSnapshot[group.id] ?? 'pending';
+
+      if (group.original !== undefined) {
         return group.original;
       }
 
-      //change old to new
-      if(group.removed && group.added){
-        return status === 'rejected' 
-          ? group.removed.value
-          : group.added.value;
+      if (group.removed && group.added) {
+        return status === 'rejected' ? group.removed.value : group.added.value;
       }
 
-      //new added Text
-      if(group.added){
-        return status === 'rejected'
-          ? ''
-          : group.added.value;
+      if (group.added) {
+        return status === 'rejected' ? '' : group.added.value;
       }
 
-      //Deleted Text
-      if(group.removed){
-        return status === 'rejected'
-          ? group.removed.value
-          : '';
+      if (group.removed) {
+        return status === 'rejected' ? group.removed.value : '';
       }
 
       return '';
-    }).join('');
-  };
+    })
+    .join('');
 
   const resolvedText = useMemo(() => {
       if (!selectedParagraph) {
         return '';
       }
-      return buildResolvedText(
+      return resolveTextForParagraph(
         selectedParagraph,
         statuses,
       );
@@ -162,30 +150,7 @@ return groups;
     }
   }, [activeParagraphId]);
 
-  const resolveTextForParagraph = (paragraph: ParagraphDiff, statusesSnapshot: Record<string, ChangeStatus>) =>
-    paragraph.groups
-      .map((group) => {
-        const status = statusesSnapshot[group.id] ?? 'pending';
 
-        if (group.original !== undefined) {
-          return group.original;
-        }
-
-        if (group.removed && group.added) {
-          return status === 'rejected' ? group.removed.value : group.added.value;
-        }
-
-        if (group.added) {
-          return status === 'rejected' ? '' : group.added.value;
-        }
-
-        if (group.removed) {
-          return status === 'rejected' ? group.removed.value : '';
-        }
-
-        return '';
-      })
-      .join('');
 
   const countPendingCharacters = (paragraph: ParagraphDiff, statusesSnapshot: Record<string, ChangeStatus>) =>
     paragraph.groups.reduce((count, group) => {
@@ -194,11 +159,9 @@ return groups;
         return count;
       }
 
-      if (group.removed && group.added) {
-        return count + Math.max(group.removed.value.length, group.added.value.length);
-      }
-
-      return count + (group.removed?.value.length ?? group.added?.value.length ?? 0);
+      return count + (
+        group.removed || group.added ? 1 : 0
+      );
     }, 0);
 
   const renderAddedText = (text?: string, animate = true) =>
@@ -216,7 +179,7 @@ return groups;
       </span>
     ));
   
-  const handleAccept2 = (groupId: string) => {
+  const handleAccept = (groupId: string) => {
     setStatuses((prev) => {
       const next = {
         ...prev,
@@ -231,7 +194,7 @@ return groups;
         return next;
       }
 
-      const text = buildResolvedText(paragraph,next);
+      const text = resolveTextForParagraph(paragraph,next);
 
       onResolvedTextChange?.(
         paragraphKey!,
@@ -244,24 +207,7 @@ return groups;
     });
   };
 
-/*   const handleAccept = (groupId: number) => {
-    setStatuses((prev) => {
-      const nextStatuses: Record<number, ChangeStatus> = { ...prev, [groupId]: 'accepted' };
-      const paragraph = paragraphDiffs.find((paragraphItem) =>
-        paragraphItem.groups.some((group) => group.id === groupId)
-      );
-      if (paragraph && paragraphKey && onResolvedTextChange) {
-        onResolvedTextChange(
-          paragraphKey,
-          resolveTextForParagraph(paragraph, nextStatuses),
-          countPendingCharacters(paragraph, nextStatuses),
-        );
-      }
-      return nextStatuses;
-    });
-  }; */
-
-  const handleReject2 = (groupId:string) => {
+  const handleReject = (groupId:string) => {
     setStatuses((prev) => {
       const next = {
         ...prev,
@@ -275,7 +221,7 @@ return groups;
       return next;
     }
 
-    const text = buildResolvedText(paragraph, next);
+    const text = resolveTextForParagraph(paragraph, next);
     onResolvedTextChange?.(
       paragraphKey!,
       text,
@@ -286,24 +232,6 @@ return groups;
     });
   };
 
-
-/*   const handleReject = (groupId: number) => {
-    setStatuses((prev) => {
-      const nextStatuses: Record<number, ChangeStatus> = { ...prev, [groupId]: 'rejected' };
-      const paragraph = paragraphDiffs.find((paragraphItem) =>
-        paragraphItem.groups.some((group) => group.id === groupId)
-      );
-      if (paragraph && paragraphKey && onResolvedTextChange) {
-        onResolvedTextChange(
-          paragraphKey,
-          resolveTextForParagraph(paragraph, nextStatuses),
-          countPendingCharacters(paragraph, nextStatuses),
-        );
-      }
-      return nextStatuses;
-    });
-  };
- */
   const findNextPendingParagraph = (startIndex: number, statusesSnapshot: Record<string, ChangeStatus>) => {
     const hasPendingChanges = (paragraph: ParagraphDiff) =>
       paragraph.groups.some((group) => {
@@ -326,57 +254,45 @@ return groups;
     return undefined;
   };
 
-  const handleAcceptParagraph = (paragraph: ParagraphDiff | undefined) => {
-    if (!paragraph) return;
-    const acceptedGroups = paragraph.groups.reduce<Record<string, ChangeStatus>>((acc, group) => {
-      if (group.removed || group.added) {
-        acc[group.id] = 'accepted';
-      }
-      return acc;
-    }, {});
+  const handleResolveParagraph = (
+    paragraph: ParagraphDiff | undefined,
+    status: 'accepted' | 'rejected'
+  ) => {
+    if(!paragraph) return;
 
     setStatuses((prev) => {
-      const nextStatuses: Record<string, ChangeStatus> = { ...prev, ...acceptedGroups };
-      if (paragraphKey && onResolvedTextChange) {
+      const nextStatuses = {...prev};
+
+      paragraph.groups.forEach((group) => {
+        if(group.removed || group.added){
+          nextStatuses[group.id] = status;
+        }
+      });
+
+      if(paragraphKey && onResolvedTextChange){
         onResolvedTextChange(
           paragraphKey,
           resolveTextForParagraph(paragraph, nextStatuses),
-          countPendingCharacters(paragraph, nextStatuses),
+          countPendingCharacters(paragraph,nextStatuses)
         );
       }
-      const nextParagraphId = findNextPendingParagraph(activeParagraphId, nextStatuses);
-      if (nextParagraphId !== undefined) {
+
+      const nextParagraphId = findNextPendingParagraph(activeParagraphId,nextStatuses);
+      if(nextParagraphId !== undefined){
         setActiveParagraphId(nextParagraphId);
       }
+
       return nextStatuses;
+
     });
   };
 
-  const handleRejectParagraph = (paragraph: ParagraphDiff | undefined) => {
-    if (!paragraph) return;
-  
-  const rejectedGroups = paragraph.groups.reduce<Record<string, ChangeStatus>>((acc, group) => {
-      if (group.removed || group.added) {
-        acc[group.id] = 'rejected';
-      }
-      return acc;
-    }, {});
+  const handleAcceptParagraph = (paragraph: ParagraphDiff | undefined) => {
+    handleResolveParagraph(paragraph, 'accepted');
+  };
 
-    setStatuses((prev) => { 
-      const nextStatuses: Record<string, ChangeStatus> = { ...prev, ...rejectedGroups };
-      if (paragraphKey && onResolvedTextChange) {
-        onResolvedTextChange(
-          paragraphKey,
-          resolveTextForParagraph(paragraph, nextStatuses),
-          countPendingCharacters(paragraph, nextStatuses),
-        );
-      }
-      const nextParagraphId = findNextPendingParagraph(activeParagraphId, nextStatuses);
-      if (nextParagraphId !== undefined) {
-        setActiveParagraphId(nextParagraphId);
-      }
-      return nextStatuses;
-    });
+  const handleRejectParagraph = (paragraph: ParagraphDiff | undefined) => {
+    handleResolveParagraph(paragraph, 'rejected');
   };
 
 
@@ -503,7 +419,7 @@ return groups;
                               size="small"
                               variant="outlined"
                               color="success"
-                              onClick={() => handleAccept2(group.id)}
+                              onClick={() => handleAccept(group.id)}
                               icon={<CheckIcon />}
                               style={{ minWidth: '56px', padding: '0 6px' }}
                             />
@@ -512,7 +428,7 @@ return groups;
                               size="small"
                               variant="outlined"
                               color="error"
-                              onClick={() => handleReject2(group.id)}
+                              onClick={() => handleReject(group.id)}
                               icon={<CloseIcon />}
                               style={{ minWidth: '56px', padding: '0 6px' }}
                             />

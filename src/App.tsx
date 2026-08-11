@@ -42,36 +42,57 @@ function extractParagraphsFromHtml(html = '') {
   return matches.map((paragraph) => paragraph.replace(/^<p>|<\/p>$/g, '').trim());
 }
 
+//use Levenshtein-Distanz for this
 function calculateChangeNumber(oldText = '', newText = '') {
-  if (!oldText && !newText) {
+
+  if(oldText === newText){
     return 0;
   }
+  
+  const oldLength = oldText.length;
+  const newLength = newText.length;
 
-  if (!oldText || !newText) {
-    return Math.max(oldText.length, newText.length);
+  //console.log("++ oldLength: ",oldLength+" New Length: ",newLength);
+
+  const matrix = Array.from(
+    {length: oldLength+1},
+    () => new Array(newLength+1).fill(0)
+  );
+
+  for(let i=0; i <= oldLength; i++){
+    matrix[i][0] = i;
   }
 
-  const maxLength = Math.max(oldText.length, newText.length);
-  let changeCount = 0;
+  for(let j=0; j <= newLength; j++){
+    matrix[0][j] = j;
+  }
 
-  for (let index = 0; index < maxLength; index += 1) {
-    if (oldText[index] !== newText[index]) {
-      changeCount += 1;
+  for(let i=1; i<= oldLength;i++){
+    for(let j=1; j <= newLength;j++){
+      const cost = oldText[i-1] === newText[j-1]? 0:1;
+      //console.log("++ cost: ",cost);
+      matrix[i][j] = Math.min(
+        matrix[i-1][j]+1, //removed character
+        matrix[i][j-1]+1, //added character
+        matrix[i-1][j-1]+cost //characters are equal/the same
+      );
     }
   }
-
-  return changeCount;
+  //console.log("++ Result: ",matrix[oldLength][newLength]);
+  return matrix[oldLength][newLength];
+ 
 }
 
 function App() {
 
   const [editorContent, setEditorContent] = useState([]);
   const [fileText, setFileText] = useState('');
-  const [activeSegmentText, setActiveSegmentText] = useState('');
+  const [activeSegmentKey, setActiveSegmentKey] = useState('');
   const [previousVersions, setPreviousVersions] = useState([]);
   const [changedSegmentTexts, setChangedSegmentTexts] = useState([]);
   const [changedParagraphDiffs, setChangedParagraphDiffs] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [resolvedTexts, setResolvedTexts] = useState<Record<string,string>>({});
   const editorText = editorContent
     .map((node) => (node.children ? node.children.map((child) => child.text).join('') : ''))
     .join('\n');
@@ -80,14 +101,52 @@ function App() {
     setFileText(text);
   };
 
-  const handleSegmentClick = (text) => {
-    setActiveSegmentText(text);
+  const handleSegmentClick = (paragraphKey) => {
+    setActiveSegmentKey(paragraphKey);
   };
 
   const handleAcceptChanges = () => {
+      if (!editorContent.length) {
+        return;
+      }
+
+    const finalContent = editorContent.map((paragraph: any, index) => {
+      const paragraphKey =
+      paragraph.paragraphKey ?? `paragraphKey-${index}`;
+
+      const resolvedText = resolvedTexts[paragraphKey];
+
+      if (resolvedText === undefined) {
+        return paragraph;
+      }
+
+      return {
+        ...paragraph,
+        paragraphKey,
+        children: [
+          {
+            text: resolvedText,
+          },
+        ],
+      };
+    });
+
+    setEditorContent(finalContent);
+
+    const finalText = finalContent
+      .map((paragraph: any) =>
+        paragraph.children
+          ?.map((child: any) => child.text || '')
+          .join('') ?? ''
+      )
+      .join('\n');
+
+    setFileText(finalText);
+
     setChangedSegmentTexts([]);
     setChangedParagraphDiffs([]);
-    setActiveSegmentText('');
+    setResolvedTexts({});
+    setActiveSegmentKey('');
   };
 
   const handleAiReply = (replyText) => {
@@ -117,6 +176,7 @@ function App() {
 
       const changeNumber = calculateChangeNumber(oldParagraph, newParagraph);
 
+      console.log("old: ",oldParagraph+" new: ",newParagraph);
       changedParagraphDiff.push({
         key: `paragraphKey-${i}`,
         oldText: oldParagraph,
@@ -124,21 +184,21 @@ function App() {
       });
 
     }
-
+    
     setChangedParagraphDiffs(changedParagraphDiff);
 
     setChangedSegmentTexts(
       changedParagraphDiff.map((diff) => ({
-        key: diff.key,
+        paragraphKey: diff.key,
         text: diff.newText,
         changeNumber: calculateChangeNumber(diff.oldText, diff.newText),
       }))
     );
      // set to first changed Paragraph
     if (changedParagraphDiff.length > 0) {
-      setActiveSegmentText(changedParagraphDiff[0].newText);
+      setActiveSegmentKey(changedParagraphDiff[0].key);
     } else {
-      setActiveSegmentText('');
+      setActiveSegmentKey('');
     }
     setFileText(replyText);
   };
@@ -151,7 +211,6 @@ function App() {
           <TextNav
             content={editorContent}
             onSegmentClick={handleSegmentClick}
-            changedTexts={changedSegmentTexts.map((segment) => segment.text)}
             changedSegments={changedSegmentTexts}
           />
           <AccteptBtn onClick={handleAcceptChanges} />
@@ -161,11 +220,15 @@ function App() {
             fileText={fileText}
             onContentChange={setEditorContent}
             onFileLoad={handleFileLoad}
-            activeSegmentText={activeSegmentText}
+            activeSegmentKey={activeSegmentKey}
             changedParagraphDiffs={changedParagraphDiffs}
             onResolvedParagraphTextChange={(paragraphKey, resolvedText, pendingCount) => {
+              setResolvedTexts((prev) => ({
+                ...prev,
+                [paragraphKey]: resolvedText,
+              }));
               setChangedSegmentTexts((prev) => prev.map((segment) =>
-                segment.key === paragraphKey
+                segment.paragraphKey === paragraphKey
                   ? { ...segment, text: resolvedText, changeNumber: pendingCount }
                   : segment
               ));
