@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/thesis-project/static/css/main.5f744f0c.css",
-    "main.js": "/thesis-project/static/js/main.97871ce1.js",
+    "main.css": "/thesis-project/static/css/main.d029dcb8.css",
+    "main.js": "/thesis-project/static/js/main.9a6fc1bc.js",
     "static/js/453.02346191.chunk.js": "/thesis-project/static/js/453.02346191.chunk.js",
     "static/media/bolder.svg": "/thesis-project/static/media/bolder.f713b55fade54e205d3848d04cfc9d58.svg",
     "static/media/sand.svg": "/thesis-project/static/media/sand.29153f9ba0017760d9d672944153cb81.svg",
@@ -12,12 +12,12 @@
     "static/media/lake.svg": "/thesis-project/static/media/lake.adb0876891552ff06eca6ba50edca35d.svg",
     "static/media/pond.svg": "/thesis-project/static/media/pond.706812ae7ca6bb72930194b76848e6f1.svg",
     "index.html": "/thesis-project/index.html",
-    "main.5f744f0c.css.map": "/thesis-project/static/css/main.5f744f0c.css.map",
-    "main.97871ce1.js.map": "/thesis-project/static/js/main.97871ce1.js.map",
+    "main.d029dcb8.css.map": "/thesis-project/static/css/main.d029dcb8.css.map",
+    "main.9a6fc1bc.js.map": "/thesis-project/static/js/main.9a6fc1bc.js.map",
     "453.02346191.chunk.js.map": "/thesis-project/static/js/453.02346191.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.5f744f0c.css",
-    "static/js/main.97871ce1.js"
+    "static/css/main.d029dcb8.css",
+    "static/js/main.9a6fc1bc.js"
   ]
 }
